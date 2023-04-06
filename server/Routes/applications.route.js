@@ -9,13 +9,33 @@ const applyRouter = Router();
 
 applyRouter.post("/create", async (req, res) => {
   const { payload } = req.body;
+
+  if (!payload) {
+    return res.status(201).json({
+      success: false,
+      message: "Empty body.",
+    });
+  }
+  console.log(req.body.files);
   const role = payload.role;
   if (role === "setter") {
-    const akg = await applicationModel.create(payload);
-    res.status(200).json({
-      success: true,
-      message: "Successfully applied",
-    });
+    try {
+      const akg = await applicationModel.create({
+        ...payload,
+        name: `${payload.fname} ${payload.lname}`,
+      });
+      console.log(akg);
+      res.status(200).json({
+        success: true,
+        message: "Successfully applied",
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(400).json({
+        success: false,
+        message: "Something went wrong.",
+      });
+    }
   }
 });
 

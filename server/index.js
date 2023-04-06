@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import mongoose from "mongoose";
 import cors from "cors";
-
+import fileUpload from "express-fileupload";
 // model
 import moderatorModel from "./model/moderator.model.js";
 import paperSetterModel from "./model/paperSetter.model.js";
@@ -11,11 +11,20 @@ import applyRouter from "./Routes/applications.route.js";
 import applicationModel from "./model/application.model.js";
 const PORT = process.env.PORT || 6789;
 const app = express();
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-app.use("/application", applyRouter);
+app.use(
+  cors({
+    origin: "*",
+  })
+);
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: false }));
+app.use(
+  fileUpload({
+    limits: { fileSize: 50 * 1024 * 1024 },
+    safeFileNames: true,
+  })
+);
+app.use("/api/application", applyRouter);
 
 app.get("/", async (req, res) => {
   try {

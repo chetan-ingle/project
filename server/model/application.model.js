@@ -17,7 +17,7 @@ const AppSchema = Schema(
     },
     address: String,
     profile: String,
-    userid: String,
+    college_id: String,
     previousWork: [String],
   },
   {
