@@ -16,7 +16,7 @@ applyRouter.post("/create", async (req, res) => {
       message: "Empty body.",
     });
   }
-  console.log(req.body.files);
+
   const role = payload.role;
   if (role === "setter") {
     try {
@@ -24,7 +24,7 @@ applyRouter.post("/create", async (req, res) => {
         ...payload,
         name: `${payload.fname} ${payload.lname}`,
       });
-      console.log(akg);
+
       res.status(200).json({
         success: true,
         message: "Successfully applied",
@@ -39,13 +39,23 @@ applyRouter.post("/create", async (req, res) => {
   }
 });
 
-applyRouter.get("/list", async (req, res) => {
-  const { payload } = req.body;
-  const role = payload.role;
-  if (role === "setter") {
-    const akg = await applicationModel.find().sort({ experience: -1 });
-
-    res.status(200).json({ data: akg });
+applyRouter.get("/setter", async (req, res) => {
+  try {
+    const akg = await applicationModel
+      .find({}, { password: false })
+      .sort({ experience: -1 });
+    res.status(200).json({
+      data: akg,
+      success: true,
+      message: "Application loaded successfully.",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      data: null,
+      success: false,
+      message: "Something went wrong.",
+    });
   }
 });
 
