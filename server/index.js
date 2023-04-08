@@ -9,11 +9,13 @@ import moderatorModel from "./model/moderator.model.js";
 import paperSetterModel from "./model/paperSetter.model.js";
 import applyRouter from "./Routes/applications.route.js";
 import applicationModel from "./model/application.model.js";
+import loginRouter from "./Routes/login.route.js";
 const PORT = process.env.PORT || 6789;
 const app = express();
 app.use(
   cors({
-    origin: "*",
+    origin: ["http://localhost:5173"],
+    credentials: true,
   })
 );
 app.use(express.json({ limit: "50mb" }));
@@ -25,6 +27,7 @@ app.use(
   })
 );
 app.use("/api/application", applyRouter);
+app.use("/api/login", loginRouter);
 
 app.get("/", async (req, res) => {
   try {
