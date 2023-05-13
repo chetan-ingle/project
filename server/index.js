@@ -10,6 +10,8 @@ import paperSetterModel from "./model/paperSetter.model.js";
 import applyRouter from "./Routes/applications.route.js";
 import applicationModel from "./model/application.model.js";
 import loginRouter from "./Routes/login.route.js";
+import SyllabusRouter from "./Routes/syllabus.route.js";
+import selectRouter from "./Routes/select.route.js";
 const PORT = process.env.PORT || 6789;
 const app = express();
 app.use(
@@ -26,8 +28,11 @@ app.use(
     safeFileNames: true,
   })
 );
+
 app.use("/api/application", applyRouter);
 app.use("/api/login", loginRouter);
+app.use("/api/syllabus", SyllabusRouter);
+app.use("/api/select/", selectRouter);
 
 app.get("/", async (req, res) => {
   try {

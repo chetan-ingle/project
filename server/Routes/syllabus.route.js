@@ -1,12 +1,12 @@
 import express from "express";
-import moderatorModel from "../model/moderator.model.js";
+import syllabusModel from "../model/syllabus.model.js";
+const SyllabusRouter = express.Router();
 
-const loginRouter = express.Router();
-
-loginRouter.post("/", async (req, res) => {
-  const { email, password } = req.body;
+SyllabusRouter.post("/create", async (req, res) => {
+  const { file, id } = req.body;
+  const payload = {};
   try {
-    const akg = await moderatorModel.findOne({ email, password });
+    const akg = await syllabusModel.create(payload);
     if (!akg) {
       return res.status(400).json({ data: null, error: "No user found." });
     }
@@ -19,4 +19,4 @@ loginRouter.post("/", async (req, res) => {
   }
 });
 
-export default loginRouter;
+export default SyllabusRouter;

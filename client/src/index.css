@@ -30,3 +30,19 @@
 * {
   font-family: 'Questrial', sans-serif;
 }
+
+::-webkit-scrollbar{
+  width: 4px;
+  height: 4px;
+  background: transparent;
+}
+/*  add padding to scrollbar */
+::-webkit-scrollbar-thumb{
+  background: #888;
+  border-radius: 5px;
+  box-sizing: padding-box;
+  border: 2px solid transparent;
+}
+::-webkit-scrollbar-thumb:hover{
+  background: #555;
+}

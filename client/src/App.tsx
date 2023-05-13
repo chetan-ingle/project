@@ -1,10 +1,13 @@
-import UserContext from '../Context/UserContext'
+import UserContext from "../Context/UserContext";
 import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./pages/Home";
 import PaperSetterApplication from "./pages/PaperSetterApplication";
 import Login from "./pages/Login";
+import SetterList from "./pages/Application_setter";
 import Dashboard from "./pages/Dashboard";
+import SetterApplications from "./pages/Application_setter";
+import SelectedSetter from "./pages/SelectedSetter";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -18,9 +21,18 @@ const router = createBrowserRouter([
     path: "/login",
     element: <Login />,
   },
+
   {
-    path: "/dashboard",
+    path: "/dashboard/",
     element: <Dashboard />,
+  },
+  {
+    path: "/dashboard/applications",
+    element: <SetterApplications />,
+  },
+  {
+    path: "/dashboard/setter",
+    element: <SelectedSetter />,
   },
 ]);
 function App() {

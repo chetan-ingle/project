@@ -14,6 +14,9 @@ export default async function loginService(params: {
       method: "POST",
       credentials: "include",
       body: JSON.stringify(params),
+      headers: {
+        'Content-type': "application/json"
+      }
     });
     const res = await req.json();
     const { error, message, data, success } = res;
