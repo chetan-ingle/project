@@ -8,6 +8,8 @@ import SetterList from "./pages/Application_setter";
 import Dashboard from "./pages/Dashboard";
 import SetterApplications from "./pages/Application_setter";
 import SelectedSetter from "./pages/SelectedSetter";
+import UploadSyllabus from "./pages/UploadSyllabus";
+import QuestionPapers from "./pages/QuestionPapers";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -33,6 +35,14 @@ const router = createBrowserRouter([
   {
     path: "/dashboard/setter",
     element: <SelectedSetter />,
+  },
+  {
+    path: "/dashboard/upload-syllabus",
+    element: <UploadSyllabus />,
+  },
+  {
+    path: "/dashboard/question-papers",
+    element: <QuestionPapers />,
   },
 ]);
 function App() {

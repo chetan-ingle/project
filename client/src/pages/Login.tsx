@@ -5,6 +5,7 @@ import Layout from "../Partials/Layout";
 import loginService from "../service/login.service";
 import useQuery from "../service/query.service";
 import extractFormData from "../utils/extractFormData";
+import { toast } from "react-hot-toast";
 
 const Login = () => {
   const { setUser, user } = useContext(userContext);
@@ -22,7 +23,10 @@ const Login = () => {
     const { data } = await loginService(params);
 
     setLoading(false);
-    console.log(data);
+    if (!data) {
+      toast.error('Please enter valid credentials.', { position: 'top-right' });
+      return
+    }
     setUser(data);
     localStorage.setItem("user", JSON.stringify(data));
     navigate("/");

@@ -1,39 +1,50 @@
-import React, { useContext } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { userContext } from "../../Context/UserContext";
-import Header from "../Partials/Header";
 import Layout from "../Partials/Layout";
+import UploadFIlePopup from "../Partials/UploadFIlePopup.component";
 
-const Home = () => {
-  const { setUser, user } = useContext(userContext);
+const Dashboard = () => {
+  const [popup, setPopup] = useState(false);
   return (
-    <div className="min-h-screen bg-slate-100 w-full">
-      {/* <header className="bg-white fixed w-full px-6 py-4 flex items-center justify-between">
-        <div className="text-lg flex items-center font-semibold">
-          <img src="/icon.png" alt="Logo" />
-          <span className="mx-2">Chetu</span>
-        </div>
-        <nav className="space-x-3 text-sky-600">
-          <Link to={"/login"}>Login</Link>
-
-          <Link to={"/dashboard/setter"}>Dashboard</Link>
+    <Layout>
+      {popup && <UploadFIlePopup onClose={setPopup} />}
+      <main className="pt-0">
+        <h4
+          className="p-8 text-xl font-semibold"
+        >
+          Dashboard
+        </h4>
+        <section className="flex px-6 w-full flex-wrap space-x-5">
           <Link
-            title={"Profile | " + user?.name}
-            className="underline font-bold text-slate-800"
-            to={"/profile"}
+            className="p-8 lg:p-12 text-xl bg-sky-500 text-white rounded-md"
+            to="/dashboard/applications"
           >
-            {user?.name}
+            Setter applications
           </Link>
-        </nav>
-      </header> */}
-      <Header />
-      <main className="pt-20">
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Incidunt quas
-        quis dicta sapiente odio officiis obcaecati corporis architecto, harum
-        commodi, voluptatem sint?
+
+          <Link
+            className="p-8 lg:p-12 text-xl bg-rose-500 text-white rounded-md"
+            to="/dashboard/setter"
+          >
+            Setters list
+          </Link>
+
+          <Link
+            className="p-8 lg:p-12 text-xl bg-yellow-500 text-white rounded-md"
+            to="/dashboard/question-papers"
+          >
+            Questions/Papers
+          </Link>
+          <Link
+            className="p-8 lg:p-12 text-xl bg-green-500 text-white rounded-md"
+            to="/dashboard/upload-syllabus"
+          >
+            Upload syllabus
+          </Link>
+        </section>
       </main>
-    </div>
+    </Layout>
   );
 };
 
-export default Home;
+export default Dashboard;

@@ -1,7 +1,7 @@
 import React, { createContext, ReactNode, useState } from 'react'
 export const userContext = createContext<{ user?: any, setUser?: any }>({})
 const UserContext: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<any>();
+  const [user, setUser] = useState<any>(null);
   
   return (
     <userContext.Provider

@@ -49,7 +49,7 @@ applyRouter.get("/setter/:subject", async (req, res) => {
             $in: [subject],
           },
         },
-        { password: false }
+        { password: false, profile: false, college_id: 0 }
       )
       .sort({ experience: -1 });
 

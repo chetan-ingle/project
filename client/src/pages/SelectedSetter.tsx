@@ -1,29 +1,75 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Layout from "../Partials/Layout";
 import { BASE_URL } from "../utils/static";
 import { ApplicationType } from "./Application_setter";
-import { FaBell, FaEnvelope } from "react-icons/fa";
+import { FaBell, FaEnvelope, FaInfo } from "react-icons/fa";
+import { notification_service } from "../service/notification.service";
+import { toast } from "react-hot-toast";
+import { userContext } from "../../Context/UserContext";
 export default function () {
   const [setter, setSetter] = useState<ApplicationType[] | null>(null);
+
+  const { user, setUser } = useContext(userContext);
+  const [subject, setSubject] = useState<string>(user?.subject[0] || "");
+
   const [loading, setLoading] = useState<boolean>(false);
+  const [mail_loading, setMailLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   async function getSetters() {
-    const req = await fetch(`${BASE_URL}/select`);
+    setLoading(true)
+
+    setSetter([])
+    const req = await fetch(`${BASE_URL}/select/${subject}`);
     const setter = await req.json();
+    setLoading(false)
     setSetter(setter.data);
   }
 
+  async function send_notification({ email, name, subject }: { email: string, name: string, subject: string }) {
+    const id = toast.loading('Please wait...', { position: 'top-right' })
+    setMailLoading(true)
+    const response = await notification_service({ email, name, subject })
+    response.success
+      ? toast.success(response.message, { position: 'top-right' })
+      :
+      toast.error(response.message, { position: 'top-right' })
+    toast.dismiss(id)
+    setMailLoading(false)
+  }
   useEffect(() => {
     getSetters();
-  }, []);
+  }, [subject]);
 
   return (
     <Layout>
       {" "}
       <main className="w-[98%] rounded-md bg-white mx-auto mt-8 text-slate-700">
+        <main className="pt-6 bg-slate-200 pb-6 px-8 flex items-center justify-between">
+          <p className="text-lg">
+            Showing applications for
+            <span className="text-purple-600 font-bold ml-2">{subject}</span>
+          </p>
+          <div className="">
+            {user?.subject.map((sub, index) => {
+              return (
+                <span
+                  key={index}
+                  onClick={() => setSubject(sub)}
+                  className={`cursor-pointer  border border-current bg-white-600 px-4 py-2 rounded-md ml-2 ${subject === sub
+                    ? "bg-purple-700 text-white"
+                    : "text-purple-600"
+                    }`}
+                >
+                  {sub}
+                </span>
+              );
+            })}
+          </div>
+        </main>
         <main className="flex px-2 items-center w-full justify-between pr-4">
+
           <h4 className="text-2xl p-6 font-bold">Selected paper setters</h4>
           <Link className="underline" to="/dashboard/applications">
             View applications
@@ -62,7 +108,6 @@ export default function () {
                       institute,
                       name,
                       phone,
-                      profile,
                       qualification,
                       subject,
                       previousWork,
@@ -75,16 +120,16 @@ export default function () {
                           {`${index + 1}`.padStart(3, "0")}
                         </td>
                         <td>
-                          <img
-                            className="w-16 h-16 rounded-full border border-purple-600 bg-purple-500 aspect-[3/4] object-cover"
-                            src={profile}
-                            alt={name}
-                          />
+                          <a
+                            className="underline text-sky-600"
+                            onClick={() => { }}>
+                            View
+                          </a>
                         </td>
                         <td>{name}</td>
                         <td>{email}</td>
                         <td>{phone}</td>
-                        <td>{typeof subject == 'object' && subject?.join(", ")}</td>
+                        <td>{subject}</td>
 
                         <td>{institute}</td>
                         <td>
@@ -99,15 +144,17 @@ export default function () {
                         <td>
                           <div className="flex space-x-2">
                             <button
-                            title="Send notification"
-                            className=" text-slate-700 hover:bg-slate-200  px-4 py-2 rounded-md">
+                              disabled={mail_loading}
+                              onClick={() => send_notification({ email, name, subject })}
+                              title="Send notification"
+                              className=" text-slate-700 hover:bg-slate-200  px-4 py-2 rounded-md">
                               <FaBell />
                             </button>
-                            <button
+                            {/* <button
                             title="Send email for setting paper"
                             className=" text-red-500 px-4 hover:bg-slate-200 py-2 rounded-md">
                               <FaEnvelope />
-                            </button>
+                            </button> */}
                           </div>
                         </td>
                       </tr>
@@ -118,12 +165,12 @@ export default function () {
             <tfoot></tfoot>
           </table>
           {/* loading */}
-          {!setter ? (
+          {loading || !setter ? (
             <div className="text-4xl font-black text-purple-200 text-center py-8">
               Loading...
             </div>
           ) : null}
-          {setter && !setter.length ? (
+          {!loading && setter && !setter.length ? (
             <div className="text-4xl font-black text-purple-200 text-center py-8">
               No records found.
             </div>

@@ -32,7 +32,7 @@ selectRouter.post("/", async (req, res) => {
         email: 1,
       }
     );
-    
+
     const unique = selected_email.filter((email) =>
       selected_ids_from_db.includes(email)
     );
@@ -99,13 +99,19 @@ selectRouter.post("/", async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    return res.status(400).json({ data: null, error: "Something went wrong." });
+    return res
+      .status(400)
+      .json({ data: null, error: "Duplicate entries ignored." });
   }
 });
 
-selectRouter.get("/", async (req, res) => {
+selectRouter.get("/:subject", async (req, res) => {
   try {
-    const akg = await paperSetterModel.find();
+    const { subject } = req.params;
+    const akg = await paperSetterModel.find(
+      { subject: { $in: [subject] } },
+      { profile: 0 }
+    );
     return res.status(200).json({
       data: akg,
       message: "Applications selected successfully.",

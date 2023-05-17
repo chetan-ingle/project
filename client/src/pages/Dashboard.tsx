@@ -9,7 +9,11 @@ const Dashboard = () => {
     <Layout>
       {popup && <UploadFIlePopup onClose={setPopup} />}
       <main className="pt-0">
-        Dashboard
+        <h4
+          className="p-4 text-left font-medium"
+        >
+          Dashboard
+        </h4>
         <section className="flex px-6 w-full flex-wrap space-x-5">
           <Link
             className="p-8 lg:p-12 text-xl bg-sky-500 text-white rounded-md"
@@ -31,12 +35,13 @@ const Dashboard = () => {
           >
             Questions/Papers
           </Link>
-          <button
-            onClick={() => setPopup(true)}
-            className="p-8 lg:p-12 text-xl bg-green-500 text-white rounded-md"
+          <Link
+            className="p-8 lg:p-12 text-xl bg-yellow-500 text-white rounded-md"
+            to="/dashboard/upload-syllabus"
           >
             Upload syllabus
-          </button>
+          </Link>
+
         </section>
       </main>
     </Layout>

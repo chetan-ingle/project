@@ -13,7 +13,7 @@ export interface ApplicationType {
   experience: number;
   qualification: string;
   institute: string;
-  subject: string[];
+  subject: string;
   email: string;
   phone: string;
   address: string;
@@ -82,11 +82,10 @@ export default function SetterApplications() {
                 <span
                   key={index}
                   onClick={() => setSubject(sub)}
-                  className={`cursor-pointer  border border-current bg-white-600 px-4 py-2 rounded-md ml-2 ${
-                    subject === sub
-                      ? "bg-purple-700 text-white"
-                      : "text-purple-600"
-                  }`}
+                  className={`cursor-pointer  border border-current bg-white-600 px-4 py-2 rounded-md ml-2 ${subject === sub
+                    ? "bg-purple-700 text-white"
+                    : "text-purple-600"
+                    }`}
                 >
                   {sub}
                 </span>
@@ -113,7 +112,7 @@ export default function SetterApplications() {
               <tr>
                 <td>Select</td>
                 <td className="py-4">Sr no.</td>
-                <td>Photo</td>
+                {/* <td>Photo</td> */}
                 <td>Name</td>
                 <td>Email</td>
                 <td>Phone</td>
@@ -155,13 +154,9 @@ export default function SetterApplications() {
                         <td className="text-center">
                           {`${index + 1}`.padStart(3, "0")}
                         </td>
-                        <td>
-                          <img
-                            className="w-16 h-16 rounded-full border border-purple-600 bg-purple-500 aspect-[3/4] object-cover"
-                            src={profile}
-                            alt={name}
-                          />
-                        </td>
+                        {/* <td>
+                         
+                        </td> */}
                         <td>{name}</td>
                         <td>{email}</td>
                         <td>{phone}</td>
