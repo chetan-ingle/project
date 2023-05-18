@@ -18,6 +18,7 @@ export async function put_material(payload: any) {
     const req = await fetch(`${BASE_URL}/syllabus/create`, {
       credentials: "include",
       method: "post",
+      mode: "cors",
       body: payload,
     });
     const res = await req.json();

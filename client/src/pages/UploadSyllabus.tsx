@@ -72,6 +72,7 @@ const UploadSyllabus = () => {
 
   async function handle_delete(id: string, name: string) {
     if (confirm(`Do you really want to delete '${name}' ?`)) {
+      setDocLink(null)
       const tsid = toast.loading("Please wait...", { position: 'top-right' })
       const data = await delete_material(id);
       toast.dismiss(tsid);
