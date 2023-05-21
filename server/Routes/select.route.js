@@ -32,17 +32,16 @@ selectRouter.post("/", async (req, res) => {
         email: 1,
       }
     );
+    const existing_email = selected_ids_from_db.map((item) => item.email);
 
-    const unique = selected_email.filter((email) =>
-      selected_ids_from_db.includes(email)
-    );
+    const unique_email = selected_email.filter((item) => {
+      return !existing_email.includes(item);
+    });
+    console.log({ selected_email }, { existing_email }, { unique_email });
 
-    const new_selected_ids = selected_ids_from_db.filter(
-      (item) => !existing_ids.includes(item)
-    );
     const getSelected = await applicationModel.find({
-      _id: {
-        $in: new_selected_ids,
+      email: {
+        $in: unique_email,
       },
     });
 
@@ -77,8 +76,8 @@ selectRouter.post("/", async (req, res) => {
         password: item.phone.split(" ").join(""),
       };
     });
-    const duplicate =
-      selected_ids_from_db.length - new_selected_ids.length || 0;
+    const duplicate = selected_ids_from_db.length - unique_email.length || 0;
+
     if (!selected.length) {
       return res.status(400).json({
         data: null,

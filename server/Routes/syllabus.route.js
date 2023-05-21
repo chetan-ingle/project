@@ -3,15 +3,16 @@ import syllabusModel from "../model/syllabus.model.js";
 import fs from "fs";
 import { exec } from "child_process";
 const SyllabusRouter = express.Router();
-let path;
-exec("pwd", (_, dir) => (path = dir));
+let path = 'C:\Users\pubgi\Desktop\finalyrpr';
+
+// exec("pwd", (_, dir) => {(path = dir); console.log(_)});
 
 SyllabusRouter.post("/create", async (req, res) => {
   const { type, by, name: desc, subject } = req.body;
   const { size, mimetype, name } = req.files.file;
   const filename = `${name}.${mimetype.split("/")[1]}`;
-  req.files.file.mv(`${path.trim()}/static/${filename}`, (error) => {
-    console.log(error);
+  req.files.file.mv(`C:\\Users\\pubgi\\Desktop\\finalyrpr\\server\\static\\${filename}`, (error) => {
+    console.log(error, path);
   });
   const payload = {
     type,

@@ -62,6 +62,7 @@ const Login = () => {
             />
             <button
               disabled={loading}
+              
               className="block bg-purple-800 text-white py-3 px-4 rounded-lg font-bold"
             >
               {loading ? "Loading" : "Submit"}

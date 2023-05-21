@@ -33,7 +33,7 @@ export default function SetterApplications() {
       "applications-last-fetched-on",
       JSON.stringify(new Date().getTime())
     );
-    localStorage.setItem("applications", JSON.stringify(data));
+    // localStorage.setItem("applications", JSON.stringify(data));
     // setApps(data?.data);
   };
   const [subject, setSubject] = useState<string>(user?.subject[0] || "");
@@ -160,7 +160,7 @@ export default function SetterApplications() {
                         <td>{name}</td>
                         <td>{email}</td>
                         <td>{phone}</td>
-                        <td>{subject?.join(", ")}</td>
+                        <td>{subject}</td>
 
                         <td>{institute}</td>
                         <td>
