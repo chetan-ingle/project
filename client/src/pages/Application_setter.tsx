@@ -33,8 +33,6 @@ export default function SetterApplications() {
       "applications-last-fetched-on",
       JSON.stringify(new Date().getTime())
     );
-    // localStorage.setItem("applications", JSON.stringify(data));
-    // setApps(data?.data);
   };
   const [subject, setSubject] = useState<string>(user?.subject[0] || "");
   useEffect(() => {
@@ -77,7 +75,7 @@ export default function SetterApplications() {
             <span className="text-purple-600 font-bold ml-2">{subject}</span>
           </p>
           <div className="">
-            {user?.subject.map((sub, index) => {
+            {user?.subject.map((sub: string, index: number) => {
               return (
                 <span
                   key={index}
