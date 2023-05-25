@@ -23,7 +23,7 @@ export interface ApplicationType {
   __v: number;
 }
 export default function SetterApplications() {
-  const { user, setUser } = useContext(userContext);
+  const { moderator, setModerator } = useContext(userContext);
   const [loading, setLoading] = useState<boolean>(false);
   // const [apps, setApps] = useState<ApplicationType[] | null>(null);
   const { data: apps, error, message, query } = useQuery(getApplication);
@@ -34,19 +34,14 @@ export default function SetterApplications() {
       JSON.stringify(new Date().getTime())
     );
   };
-  const [subject, setSubject] = useState<string>(user?.subject[0] || "");
+  const [subject, setSubject] = useState<string>(moderator?.subject[0]);
   useEffect(() => {
     getApplications(subject);
-    // console.log(localStorage.getItem("applications-last-fetched-on"));
-    // if (
-    //   parseInt(localStorage.getItem("applications-last-fetched-on") as string) +
-    //     300000 <=
-    //   new Date().getTime()
-    // ) {
-    // } else {
-    //   setApps(JSON.parse(localStorage.getItem("applications") as string));
-    // }
   }, [subject]);
+
+  useEffect(() => {
+    setSubject(moderator?.subject[0]);
+  }, [moderator?.subject[0]]);
 
   async function handleSelected(evt: ChangeEvent<HTMLFormElement>) {
     evt.preventDefault();
@@ -75,15 +70,16 @@ export default function SetterApplications() {
             <span className="text-purple-600 font-bold ml-2">{subject}</span>
           </p>
           <div className="">
-            {user?.subject.map((sub: string, index: number) => {
+            {moderator?.subject.map((sub: string, index: number) => {
               return (
                 <span
                   key={index}
                   onClick={() => setSubject(sub)}
-                  className={`cursor-pointer  border border-current bg-white-600 px-4 py-2 rounded-md ml-2 ${subject === sub
-                    ? "bg-purple-700 text-white"
-                    : "text-purple-600"
-                    }`}
+                  className={`cursor-pointer  border border-current bg-white-600 px-4 py-2 rounded-md ml-2 ${
+                    subject === sub
+                      ? "bg-purple-700 text-white"
+                      : "text-purple-600"
+                  }`}
                 >
                   {sub}
                 </span>
@@ -93,7 +89,7 @@ export default function SetterApplications() {
         </main>
         <main className="flex px-2 items-center w-full justify-between pr-4">
           <h4 className="text-2xl p-6 font-bold">Paper setter application</h4>
-          <Link className="underline" to="/dashboard/setter">
+          <Link className="underline" to="/dashboard/moderator/setters">
             View selected
           </Link>
         </main>

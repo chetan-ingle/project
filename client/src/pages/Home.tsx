@@ -1,50 +1,73 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useContext, useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { userContext } from "../../Context/UserContext";
+import Header from "../Partials/Header";
 import Layout from "../Partials/Layout";
-import UploadFIlePopup from "../Partials/UploadFIlePopup.component";
 
-const Dashboard = () => {
-  const [popup, setPopup] = useState(false);
+const Home = () => {
+  const { moderator, setModerator } = useContext(userContext);
+  const [alreadyLoggedIn, setAlreadyLoggedIn] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    moderator?._id && setAlreadyLoggedIn(true);
+  }, [moderator?._id]);
+
   return (
     <Layout>
-      {popup && <UploadFIlePopup onClose={setPopup} />}
-      <main className="pt-0">
-        <h4
-          className="p-8 text-xl font-semibold"
+      <div className="center w-screen flex justify-center items-center flex-col  ">
+        <div
+          style={{ display: alreadyLoggedIn ? "flex" : "none" }}
+          className="bg-white justify-end rounded-md w-11/12 flex-wrap p-4 flex items-center  shadow-lg text-sm"
         >
-          Dashboard
-        </h4>
-        <section className="flex px-6 w-full flex-wrap space-x-5">
-          <Link
-            className="p-8 lg:p-12 text-xl bg-sky-500 text-white rounded-md"
-            to="/dashboard/applications"
+          <main className=" mr-auto">
+            <h1 className="text-xl text-center mb-4">
+              Already logged in as {moderator?.name}
+            </h1>
+            <p  
+            className="px-4 py-2 bg-sky-600 text-white w-max font-medium uppercase tracking-wider rounded-md"
+            >{moderator?.role}</p>
+          </main>
+          <button
+            onClick={() => navigate("/dashboard/moderator")}
+            className="block mr-4 bg-purple-800 text-white py-3 px-4 rounded-lg "
           >
-            Setter applications
-          </Link>
-
-          <Link
-            className="p-8 lg:p-12 text-xl bg-rose-500 text-white rounded-md"
-            to="/dashboard/setter"
+            Go to dashboard
+          </button>
+          <button
+            onClick={() => {
+              setModerator(null);
+              localStorage.removeItem("user");
+              setAlreadyLoggedIn(false);
+            }}
+            className="block bg-rose-500 text-white py-3 px-4 rounded-lg"
           >
-            Setters list
-          </Link>
-
+            Logout
+          </button>
+        </div>
+        <div className="flex mt-64 w-2/3 justify-evenly">
           <Link
-            className="p-8 lg:p-12 text-xl bg-yellow-500 text-white rounded-md"
-            to="/dashboard/question-papers"
+            to="/login/moderator"
+            className="border border-gray-300 hover:bg-gray-100 px-4 py-2 rounded-md h-max"
           >
-            Questions/Papers
+            Moderator
           </Link>
           <Link
-            className="p-8 lg:p-12 text-xl bg-green-500 text-white rounded-md"
-            to="/dashboard/upload-syllabus"
+            to="/login/examiner"
+            className="border border-gray-300 hover:bg-gray-100 px-4 py-2 rounded-md h-max"
           >
-            Upload syllabus
+            Examiner
           </Link>
-        </section>
-      </main>
+          <Link
+            to="/login/setter"
+            className="border border-gray-300 hover:bg-gray-100 px-4 py-2 rounded-md h-max"
+          >
+            Setter
+          </Link>
+        </div>
+      </div>
     </Layout>
   );
 };
 
-export default Dashboard;
+export default Home;

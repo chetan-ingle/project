@@ -1,33 +1,32 @@
 import React, { useContext, useEffect } from "react";
-import { json, Link, useNavigate } from "react-router-dom";
+import { json, Link, useLocation, useNavigate } from "react-router-dom";
 import { userContext } from "../../Context/UserContext";
 import { FaUser, FaPowerOff } from "react-icons/fa";
 const Header = () => {
-  const { setUser, user } = useContext(userContext);
+  const { moderator: user, setModerator: setUser } = useContext(userContext);
   const navigate = useNavigate();
+  const location = useLocation();
   useEffect(() => {
     setUser(JSON.parse(localStorage.getItem("user") as string));
-    user?._id ? null : navigate("/login");
+    // user?._id ? null : navigate("/login");
   }, [user?._id]);
   //
   const handle_logout = () => {
     localStorage.removeItem("user");
     setUser(null);
-    navigate("/login");
+    navigate("/");
+
   };
   return (
     <header className="bg-white fixed w-full px-6 py-4 flex items-center justify-between">
-      <Link to={"/"} className="text-lg flex items-center font-semibold">
+      <Link
+        to={user?.role ? "/dashboard/" + user?.role : '/'}
+        className="text-lg flex items-center font-semibold"
+      >
         <img src="/icon.png" alt="Logo" />
         <span className="mx-2">SRPD</span>
       </Link>
       <nav className="space-x-3 flex items-center text-sky-600">
-        {user?.name ? (
-          <Link to={"/dashboard"}>Dashboard</Link>
-        ) : (
-          <Link to={"/login"}>Login</Link>
-        )}
-
         <div
           tabIndex={-1}
           className="relative cursor-pointer underline font-bold text-slate-800 group"

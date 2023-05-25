@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import extractFormData from "../utils/extractFormData";
 import { BASE_URL } from "../utils/static";
@@ -34,6 +34,10 @@ export default function PaperSetterApplication() {
     e: React.ChangeEvent<HTMLInputElement>,
     setter: React.Dispatch<React.SetStateAction<string>>
   ) {
+    if (!e.target.files?.length) {
+      alert("Please select a file");
+      return;
+    };
     const file = e.target.files[0];
     if (
       file.type !== "image/png" &&
@@ -53,6 +57,12 @@ export default function PaperSetterApplication() {
       setter(reader.result as string);
     };
   }
+
+  //  change title
+  useEffect(() => {
+    document.title = "Paper Setter Application";
+  }, []);
+
   return (
     <main className="bg-slate-200 py-12">
       <Toaster />
@@ -156,9 +166,7 @@ export default function PaperSetterApplication() {
               className="block text-gray-700 font-bold mb-2"
             >
               Subject:
-              <small className="px-2 font-normal">
-
-              </small>
+              <small className="px-2 font-normal"></small>
             </label>
             <input
               list="sub-list"

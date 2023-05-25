@@ -4,6 +4,7 @@ const examinerSchema = Schema(
   {
     name: String,
     institute: String,
+    institute_id: String,
     email: {
       type: String,
       unique: true,
@@ -12,15 +13,18 @@ const examinerSchema = Schema(
       type: String,
       unique: true,
     },
-    address: String,
+    institute_address: String,
     isVerified: Boolean,
     profile: String,
-    userid: String,
     password: String,
+    role: {
+      type: String,
+      default: "examiner",
+    },  
   },
   {
     timeStamps: true,
   }
 );
 
-export default model("moderator", examinerSchema);
+export default model("examiner", examinerSchema);

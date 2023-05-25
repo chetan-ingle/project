@@ -3,7 +3,7 @@ import syllabusModel from "../model/syllabus.model.js";
 import fs from "fs";
 import { exec } from "child_process";
 const SyllabusRouter = express.Router();
-let path = 'C:\Users\pubgi\Desktop\finalyrpr';
+let path = "C:UserspubgiDesktop\finalyrpr";
 
 // exec("pwd", (_, dir) => {(path = dir); console.log(_)});
 
@@ -11,9 +11,12 @@ SyllabusRouter.post("/create", async (req, res) => {
   const { type, by, name: desc, subject } = req.body;
   const { size, mimetype, name } = req.files.file;
   const filename = `${name}.${mimetype.split("/")[1]}`;
-  req.files.file.mv(`C:\\Users\\pubgi\\Desktop\\finalyrpr\\server\\static\\${filename}`, (error) => {
-    console.log(error, path);
-  });
+  req.files.file.mv(
+    `C:\\Users\\pubgi\\Desktop\\finalyrpr\\server\\static\\${filename}`,
+    (error) => {
+      console.log(error, path);
+    }
+  );
   const payload = {
     type,
     desc,
@@ -47,7 +50,21 @@ SyllabusRouter.get("/:id", async (req, res) => {
   } catch (error) {
     return res
       .status(400)
-      .json({ data: akg, message: "Fail to load materials.", success: false });
+      .json({ data: null, message: "Fail to load materials.", success: false });
+  }
+});
+
+SyllabusRouter.get("/subject/:subject", async (req, res) => {
+  const { subject } = req.params;
+  try {
+    const data = await syllabusModel.find({
+      subject,
+    });
+    return res.status(200).json({ data, message: "Success.", success: true });
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ data: null, message: "Fail to load materials.", success: false });
   }
 });
 

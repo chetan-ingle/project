@@ -1,6 +1,6 @@
 import React from "react";
 import { BASE_URL } from "../utils/static";
-export const notification_service = async ({ name, email, subject }) => {
+export const notification_service = async ({ name, email, subject }: { name: string, email: string, subject: string }) => {
   const api = `${BASE_URL}/mail/notify/setter`;
   const req = await fetch(api, {
     method: "post",

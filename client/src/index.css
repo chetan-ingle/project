@@ -46,3 +46,13 @@
 ::-webkit-scrollbar-thumb:hover{
   background: #555;
 }
+
+.border {
+  border: 1px solid #bbb;
+}
+
+.desc main{
+  width: 100% !important;
+  margin: 0 !important;
+  margin: 2rem 0 !important;
+}

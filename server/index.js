@@ -11,9 +11,12 @@ import applyRouter from "./Routes/applications.route.js";
 import applicationModel from "./model/application.model.js";
 import loginRouter from "./Routes/login.route.js";
 import SyllabusRouter from "./Routes/syllabus.route.js";
-import selectRouter from "./Routes/select.route.js";
+import selectRouter from "./Routes/setter.route.js";
 import emailRouter from "./Routes/mail.route.js";
+import addRouter from "./Routes/add.route.js";
 import paper_router from "./Routes/paper.route.js";
+import ModeratorRouter from "./Routes/moderator.route.js";
+import notificationRouter from "./Routes/notification.route.js";
 const PORT = process.env.PORT || 6789;
 const app = express();
 app.use(
@@ -33,11 +36,14 @@ app.use(
 app.use(express.urlencoded({ extended: false }));
 
 app.use("/api/application", applyRouter);
+app.use("/api/moderator", ModeratorRouter);
 app.use("/api/login", loginRouter);
 app.use("/api/syllabus", SyllabusRouter);
-app.use("/api/select/", selectRouter);
+app.use("/api/setter/", selectRouter);
 app.use("/api/paper/", paper_router);
 app.use("/api/mail/", emailRouter);
+app.use("/api/add/",addRouter);
+app.use("/api/notification/", notificationRouter);
 
 app.get("/", async (req, res) => {
   try {

@@ -7,8 +7,9 @@ import useQuery from "../service/query.service";
 import extractFormData from "../utils/extractFormData";
 import { toast } from "react-hot-toast";
 
-const Login = () => {
-  const { setUser, user } = useContext(userContext);
+const ModeratorLogin = () => {
+  const { moderator, setModerator } = useContext(userContext);
+  const [alreadyLoggedIn, setAlreadyLoggedIn] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   // const { data, error, message, loading, success, query } =
@@ -20,25 +21,49 @@ const Login = () => {
     console.log(params);
     // await query(params);
     setLoading(true);
-    const { data } = await loginService(params);
+    const { data } = await loginService("/login/moderator", params as any);
 
     setLoading(false);
     if (!data) {
-      toast.error('Please enter valid credentials.', { position: 'top-right' });
-      return
+      toast.error("Please enter valid credentials.", { position: "top-right" });
+      return;
     }
-    setUser(data);
+    setModerator(data);
     localStorage.setItem("user", JSON.stringify(data));
-    navigate("/");
+    navigate("/dashboard/moderator");
   }
   useEffect(() => {
-    user?._id && navigate("/");
-  }, [user?._id]);
+    moderator?.role === "moderator" && setAlreadyLoggedIn(true);
+  }, [moderator?._id]);
   return (
     <Layout>
       <main className="h-screen w-full grid place-items-center">
+        <div
+          style={{ display: alreadyLoggedIn ? "flex" : "none" }}
+          className="bg-white justify-end rounded-md w-11/12 flex-wrap p-4 flex items-center  shadow-lg text-sm"
+        >
+          <h1 className="text-xl mr-auto text-center mb-4">
+            Already logged in as {moderator?.name}
+          </h1>
+          <button
+            onClick={() => navigate("/dashboard/moderator")}
+            className="block mr-4 bg-purple-800 text-white py-3 px-4 rounded-lg "
+          >
+            Go to dashboard
+          </button>
+          <button
+            onClick={() => {
+              setModerator(null);
+              localStorage.removeItem("moderator");
+              setAlreadyLoggedIn(false);
+            }}
+            className="block bg-rose-500 text-white py-3 px-4 rounded-lg"
+          >
+            Logout
+          </button>
+        </div>
         <section className="max-w-[500px] w-11/12 p-6 md:p-12 rounded-lg bg-white shadow-lg">
-          <h4 className="text-lg pb-4 md:text-xl font-bold">Login here</h4>
+          <h4 className="text-lg pb-4 md:text-xl font-bold">Moderator login</h4>
           {/* {error && (
             <h4 className="bg-red-500 text-white px-5 py-2  mb-4">
               {error || "Error occured."}
@@ -62,7 +87,6 @@ const Login = () => {
             />
             <button
               disabled={loading}
-              
               className="block bg-purple-800 text-white py-3 px-4 rounded-lg font-bold"
             >
               {loading ? "Loading" : "Submit"}
@@ -74,4 +98,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ModeratorLogin;

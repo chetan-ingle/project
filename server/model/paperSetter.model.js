@@ -20,6 +20,10 @@ const setterSchema = Schema(
     userid: String,
     password: String,
     previousWork: [String],
+    role: {
+      type: String,
+      default: "setter",
+    },
   },
   {
     timeStamps: true,

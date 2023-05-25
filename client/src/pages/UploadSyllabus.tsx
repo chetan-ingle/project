@@ -9,7 +9,7 @@ import useMaterial from '../hooks/useMaterial';
 import { AiFillDelete } from 'react-icons/ai'
 
 const UploadSyllabus = () => {
-  const { user } = useContext(userContext)
+  const { moderator :user } = useContext(userContext)
   const [doc_link, setDocLink] = useState<null | string>(null);
   const [upload_doc, set_upload_doc] = useState<boolean>(false);
   const [name, setName] = useState<null | string>(null);
@@ -53,7 +53,7 @@ const UploadSyllabus = () => {
     // refetch uploaded docs
     refetch();
   }
-  const { data, loading: fetching, refetch } = useMaterial(user?._id);
+  const { data, loading: fetching, refetch } = useMaterial({id:user?._id });
   const material_data = [
     {
       title: 'Syllabus',
@@ -218,16 +218,23 @@ const UploadSyllabus = () => {
                     className='flex pt-4 flex-col space-y-3'
                   >
                     {
-                      data?.map((item: { desc: string, url: string, _id: string }) =>
+                      data?.map((item: { desc: string, url: string, _id: string , subject : string}) =>
                         <div
                           key={item._id}
                           className='flex py-2 justify-between px-4 items-center bg-slate-100'
                         >
                           <button
-                            className='underline text-left'
+                            className=' text-left flex  items-center'
                             onClick={() => setDocLink('http://localhost:6789/static/' + item?.url)}
                           >
-                            {item.desc}
+                            <p
+                            className='underline'
+                            >
+                              {item.desc}
+                            </p>
+                            <small className='px-2 text-red-500 text-sm no-underline'>
+                            (  {item.subject})
+                            </small>
                           </button>
                           <span
                             onClick={() => handle_delete(item?._id, item.desc)}

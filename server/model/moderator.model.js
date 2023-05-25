@@ -23,6 +23,10 @@ const moderatorSchema = new Schema(
     profile: String,
     password: String,
     previousWork: [String],
+    role: {
+      type: String,
+      default: "moderator",
+    },  
   },
   {
     timestamps: true,

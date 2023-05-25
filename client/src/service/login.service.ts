@@ -1,8 +1,9 @@
 import { BASE_URL } from "../utils/static";
 
-export default async function loginService(params: {
-  username: string;
+export default async function loginService(endpoint:string,params: {
+  email: string;
   password: string;
+
 }): Promise<{
   error: boolean;
   message: string | null;
@@ -10,10 +11,10 @@ export default async function loginService(params: {
   success: boolean;
 }> {
   try {
-    const req = await fetch(`${BASE_URL}/login`, {
+    const req = await fetch(`${BASE_URL}${endpoint}`, {
       method: "POST",
       credentials: "include",
-      body: JSON.stringify(params),
+      body: JSON.stringify({email: params.email, password: params.password}),
       headers: {
         'Content-type': "application/json"
       }

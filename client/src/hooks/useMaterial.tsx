@@ -1,21 +1,28 @@
-import React, { useEffect, useState } from 'react'
-import { get_material } from '../service/material.service';
+import React, { useEffect, useState } from "react";
+import { get_material } from "../service/material.service";
 
-
-const useMaterial = (id: string) => {
+const useMaterial = ({ id, subject }: { id?: string; subject?: string }) => {
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<any[] | null>(null)
+  const [data, setData] = useState<any[] | null>(null);
   async function refetch() {
-    const { data = [], message, error, success } = await get_material(id);
+    const {
+      data = [],
+      message,
+      error,
+      success,
+    } = await get_material({ id, subject });
     setData(data);
   }
   useEffect(() => {
-    refetch();
-  }, []);
+    (id || subject) && refetch();
+  }, [id, subject]);
 
   return {
-    data, loading, refetch, setData
-  }
-}
+    data,
+    loading,
+    refetch,
+    setData,
+  };
+};
 
-export default useMaterial
+export default useMaterial;

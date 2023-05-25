@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { sendMail } from "../email/sendMail.js";
+import notificationModel from "../model/notification.model.js";
 import notify_setter from "../template/notify.js";
 
 const emailRouter = Router();
@@ -19,7 +20,14 @@ emailRouter.post("/notify/setter", async (req, res) => {
       html: notify_setter({ name, subject }),
       subject: "Notification regarding question paper application",
     });
-    res.status(200).json({
+    await notificationModel.create({
+      email,
+      subject: "Notification regarding question paper application",
+      description: notify_setter({ name, subject }),
+      name,
+      to: "paper-setter",
+    });
+    return res.status(200).json({
       success: true,
       message: `Notification send to ${name} for the subject ${subject}`,
     });

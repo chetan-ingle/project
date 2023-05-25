@@ -1,8 +1,9 @@
 import { BASE_URL } from "../utils/static";
 
-export async function get_material(id: string) {
+export async function get_material({ id, subject }: { id?: string; subject?: string }) {
   try {
-    const req = await fetch(`${BASE_URL}/syllabus/${id}`, {
+    const path = id ? `${BASE_URL}/syllabus/${id}` : `${BASE_URL}/syllabus/subject/${subject}`;
+    const req = await fetch(path, {
       credentials: "include",
     });
     const res = await req.json();

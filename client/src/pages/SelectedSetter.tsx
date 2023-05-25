@@ -10,33 +10,41 @@ import { userContext } from "../../Context/UserContext";
 export default function () {
   const [setter, setSetter] = useState<ApplicationType[] | null>(null);
 
-  const { user, setUser } = useContext(userContext);
-  const [subject, setSubject] = useState<string>(user?.subject[0] || "");
+  const { moderator, setModerator } = useContext(userContext);
+  const [subject, setSubject] = useState<string>(moderator?.subject[0] || "");
 
   const [loading, setLoading] = useState<boolean>(false);
   const [mail_loading, setMailLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   async function getSetters() {
-    setLoading(true)
+    
+    setLoading(true);
 
-    setSetter([])
-    const req = await fetch(`${BASE_URL}/select/${subject}`);
+    setSetter([]);
+    const req = await fetch(`${BASE_URL}/setter/subject/${subject}`);
     const setter = await req.json();
-    setLoading(false)
+    setLoading(false);
     setSetter(setter.data);
   }
 
-  async function send_notification({ email, name, subject }: { email: string, name: string, subject: string }) {
-    const id = toast.loading('Please wait...', { position: 'top-right' })
-    setMailLoading(true)
-    const response = await notification_service({ email, name, subject })
+  async function send_notification({
+    email,
+    name,
+    subject,
+  }: {
+    email: string;
+    name: string;
+    subject: string;
+  }) {
+    const id = toast.loading("Please wait...", { position: "top-right" });
+    setMailLoading(true);
+    const response = await notification_service({ email, name, subject });
     response.success
-      ? toast.success(response.message, { position: 'top-right' })
-      :
-      toast.error(response.message, { position: 'top-right' })
-    toast.dismiss(id)
-    setMailLoading(false)
+      ? toast.success(response.message, { position: "top-right" })
+      : toast.error(response.message, { position: "top-right" });
+    toast.dismiss(id);
+    setMailLoading(false);
   }
   useEffect(() => {
     getSetters();
@@ -52,15 +60,16 @@ export default function () {
             <span className="text-purple-600 font-bold ml-2">{subject}</span>
           </p>
           <div className="">
-            {user?.subject.map((sub, index) => {
+            {moderator?.subject.map((sub: string, index: number) => {
               return (
                 <span
                   key={index}
                   onClick={() => setSubject(sub)}
-                  className={`cursor-pointer  border border-current bg-white-600 px-4 py-2 rounded-md ml-2 ${subject === sub
-                    ? "bg-purple-700 text-white"
-                    : "text-purple-600"
-                    }`}
+                  className={`cursor-pointer  border border-current bg-white-600 px-4 py-2 rounded-md ml-2 ${
+                    subject === sub
+                      ? "bg-purple-700 text-white"
+                      : "text-purple-600"
+                  }`}
                 >
                   {sub}
                 </span>
@@ -69,9 +78,8 @@ export default function () {
           </div>
         </main>
         <main className="flex px-2 items-center w-full justify-between pr-4">
-
           <h4 className="text-2xl p-6 font-bold">Selected paper setters</h4>
-          <Link className="underline" to="/dashboard/applications">
+          <Link className="underline" to="/dashboard/moderator/applications">
             View applications
           </Link>
         </main>{" "}
@@ -122,7 +130,8 @@ export default function () {
                         <td>
                           <a
                             className="underline text-sky-600"
-                            onClick={() => { }}>
+                            onClick={() => {}}
+                          >
                             View
                           </a>
                         </td>
@@ -145,9 +154,12 @@ export default function () {
                           <div className="flex space-x-2">
                             <button
                               disabled={mail_loading}
-                              onClick={() => send_notification({ email, name, subject })}
+                              onClick={() =>
+                                send_notification({ email, name, subject })
+                              }
                               title="Send notification"
-                              className=" text-slate-700 hover:bg-slate-200  px-4 py-2 rounded-md">
+                              className=" text-slate-700 hover:bg-slate-200  px-4 py-2 rounded-md"
+                            >
                               <FaBell />
                             </button>
                             {/* <button

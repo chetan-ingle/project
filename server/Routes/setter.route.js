@@ -1,10 +1,13 @@
 import express from "express";
-const selectRouter = express.Router();
+const setterRouter = express.Router();
 import paperSetterModel from "../model/paperSetter.model.js";
 import applicationModel from "../model/application.model.js";
 import { sendMail } from "../email/sendMail.js";
 import setter_selection_mail from "../template/selection.js";
+import mongoose from "mongoose";
+import notificationModel from "../model/notification.model.js";
 // import {randomUUID} from "crypto";
+const ObjectId = mongoose.Types.ObjectId;
 
 function randomUUID() {
   const timestamp = ((new Date().getTime() / 1000) | 0).toString(16);
@@ -14,7 +17,7 @@ function randomUUID() {
   return `${timestamp}${suffix}`;
 }
 
-selectRouter.post("/", async (req, res) => {
+setterRouter.post("/", async (req, res) => {
   const { selected_email = [], subject } = req.body;
   // return
   if (!selected_email.length) {
@@ -46,6 +49,12 @@ selectRouter.post("/", async (req, res) => {
     });
 
     const selected = getSelected.map((item) => {
+      const html = setter_selection_mail(
+        item.name,
+        subject,
+        item.email,
+        item.phone.split(" ").join("")
+      );
       async function sendMailToUser() {
         try {
           const mail = await sendMail({
@@ -56,14 +65,16 @@ selectRouter.post("/", async (req, res) => {
             text:
               "Your application is selected for paper setting for subject " +
               subject,
-            html: setter_selection_mail(
-              item.name,
-              subject,
-              item.email,
-              item.phone.split(" ").join("")
-            ),
+            html,
           });
-          console.log(mail);
+
+          await notificationModel.create({
+            email: item.email,
+            subject:  "Application selected for paper setting for subject " + subject,
+            description: html,
+            name: item.name,
+            to: "paper-setter",
+          });
         } catch (error) {
           console.log(error);
         }
@@ -104,13 +115,62 @@ selectRouter.post("/", async (req, res) => {
   }
 });
 
-selectRouter.get("/:subject", async (req, res) => {
+setterRouter.get("/", async (req, res) => {
+  try {
+    const akg = await applicationModel.find(
+      {},
+      {
+        profile: req.query.all ? 1 : 0,
+        name: 1,
+        experience: 1,
+        qualification: 1,
+        institute: 1,
+        subject: 1,
+        email: 1,
+        phone: 1,
+        address: 1,
+        profile: 1,
+        userid: 0,
+        previousWork: 1,
+        role: 1,
+      }
+    );
+    return res.status(200).json({
+      data: akg,
+      message: "Success.",
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      data: null,
+      error: "Something went wrong.",
+    });
+  }
+});
+
+setterRouter.get("/:email", async (req, res) => {
+  const { email } = req.params;
+  try {
+    const akg = await applicationModel.findOne({ email });
+    return res.status(200).json({
+      data: akg,
+      message: "Success.",
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      data: null,
+      error: "Something went wrong.",
+    });
+  }
+});
+
+setterRouter.get("/subject/:subject", async (req, res) => {
   try {
     const { subject } = req.params;
-    const akg = await paperSetterModel.find(
-      { subject: { $in: [subject] } },
-      { profile: 0 }
-    );
+    const akg = await paperSetterModel.find({ subject });
     return res.status(200).json({
       data: akg,
       message: "Applications selected successfully.",
@@ -122,4 +182,4 @@ selectRouter.get("/:subject", async (req, res) => {
   }
 });
 
-export default selectRouter;
+export default setterRouter;
