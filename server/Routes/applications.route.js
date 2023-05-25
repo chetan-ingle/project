@@ -31,19 +31,28 @@ applyRouter.post("/create", async (req, res) => {
       });
     } catch (error) {
       console.log(error);
-      res.status(400).json({
+      res.status(200).json({
         success: false,
-        message: "Something went wrong.",
+        message: "Duplicate email or phone number found.",
       });
     }
   }
 });
 
-applyRouter.get("/setter", async (req, res) => {
+applyRouter.get("/setter/:subject", async (req, res) => {
+  const { subject } = req.params;
   try {
     const akg = await applicationModel
-      .find({}, { password: false })
+      .find(
+        {
+          subject: {
+            $in: [subject],
+          },
+        },
+        { password: false, profile: false, college_id: 0 }
+      )
       .sort({ experience: -1 });
+
     res.status(200).json({
       data: akg,
       success: true,
@@ -51,7 +60,7 @@ applyRouter.get("/setter", async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(400).json({
+    res.status(203).json({
       data: null,
       success: false,
       message: "Something went wrong.",

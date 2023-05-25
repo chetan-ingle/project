@@ -1,12 +1,28 @@
-export default async function query(
+import { useState } from "react";
+
+export default function useQuery(
   service: (param: any) => Promise<{
     error: boolean;
     message: string | null;
     data: any | null;
     success: boolean;
-  }>,
-  params: any
+  }>
 ) {
-  const { error, message, data, success } = await service(params);
-  return { error, message, data, success };
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<any[] | null>(null);
+  const [error, setError] = useState(false);
+  const [message, setMessage] = useState<null | string>(null);
+  const [success, setSuccess] = useState(false);
+
+  async function query(params: any) {
+    setData(null);
+    setLoading(true);
+    const { error: err, message, data: res, success } = await service(params);
+    setData(res);
+    setError(err);
+    setMessage(message);
+    setSuccess(success);
+    setLoading(false);
+  }
+  return { error, message, data, success, loading, query };
 }

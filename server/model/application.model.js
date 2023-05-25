@@ -6,7 +6,7 @@ const AppSchema = Schema(
     experience: Number,
     qualification: String,
     institute: String,
-    subject: [String],
+    subject: String,
     email: {
       type: String,
       unique: true,

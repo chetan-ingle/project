@@ -1,17 +1,22 @@
 import nodemailer from "nodemailer";
 
 const transport = nodemailer.createTransport({
-  host: "smtp",
+  port: 465,
+  host: "smtp.gmail.com",
   auth: {
     user: process.env.EMAIL,
     pass: process.env.PASS,
   },
 });
 
-const akg = transport.sendMail({
-  to: "sanketgawande.gcoey@gmail.com",
-  text: "Hello there",
-  subject: "Test",
-});
+export async function sendMail({ from, to, subject, text, html }) {
+  const mail = await transport.sendMail({
+    from,
+    to,
+    subject,
+    text,
+    html,
+  });
 
-console.log(akg);
+  return mail;
+}

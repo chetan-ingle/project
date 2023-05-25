@@ -6,7 +6,7 @@ const setterSchema = Schema(
     experience: Number,
     qualification: String,
     institute: String,
-    subject: [String],
+    subject: String,
     email: {
       type: String,
       unique: true,
@@ -20,6 +20,10 @@ const setterSchema = Schema(
     userid: String,
     password: String,
     previousWork: [String],
+    role: {
+      type: String,
+      default: "setter",
+    },
   },
   {
     timeStamps: true,
