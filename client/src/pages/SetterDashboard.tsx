@@ -19,12 +19,11 @@ function SetterDashboard() {
           >
             <p>View Material</p>
           </Link> */}
-
           <Link
-            className="p-8 lg:p-12 text-xl bg-green-500 text-white rounded-md"
-            to="/dashboard/moderator/setters"
+            className="p-8 lg:p-12 text-xl bg-sky-600 text-white rounded-md"
+            to="/dashboard/setter/materials"
           >
-            download & Question paper
+            Syllabus & exam material
           </Link>
 
           <Link
@@ -33,7 +32,13 @@ function SetterDashboard() {
           >
             Notifications
           </Link>
-         
+          <Link
+            className="p-8 lg:p-12 text-xl bg-rose-500 text-white rounded-md"
+            to="/dashboard/setter/upload-paper"
+          >
+            Upload Question paper
+          </Link>
+
         </section>
       </main>
     </Layout>

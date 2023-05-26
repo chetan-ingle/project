@@ -13,6 +13,7 @@ const ModeratorDashboard = () => {
     if (moderator && moderator?.role !== "moderator") {
       navigate("/login/moderator");
     }
+    console.log(moderator)
   }, [moderator?.role]);
 
   return (

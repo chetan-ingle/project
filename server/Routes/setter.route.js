@@ -17,6 +17,7 @@ function randomUUID() {
   return `${timestamp}${suffix}`;
 }
 
+// select setter
 setterRouter.post("/", async (req, res) => {
   const { selected_email = [], subject } = req.body;
   // return
@@ -61,7 +62,8 @@ setterRouter.post("/", async (req, res) => {
             from: process.env.EMAIL,
             to: item.email,
             subject:
-              "Application selected for paper setting for subject " + subject,
+              "Application selected for paper setting for subject " +
+              subject.name,
             text:
               "Your application is selected for paper setting for subject " +
               subject,
@@ -70,7 +72,8 @@ setterRouter.post("/", async (req, res) => {
 
           await notificationModel.create({
             email: item.email,
-            subject:  "Application selected for paper setting for subject " + subject,
+            subject:
+              "Application selected for paper setting for subject " + subject,
             description: html,
             name: item.name,
             to: "paper-setter",
@@ -117,24 +120,9 @@ setterRouter.post("/", async (req, res) => {
 
 setterRouter.get("/", async (req, res) => {
   try {
-    const akg = await applicationModel.find(
-      {},
-      {
-        profile: req.query.all ? 1 : 0,
-        name: 1,
-        experience: 1,
-        qualification: 1,
-        institute: 1,
-        subject: 1,
-        email: 1,
-        phone: 1,
-        address: 1,
-        profile: 1,
-        userid: 0,
-        previousWork: 1,
-        role: 1,
-      }
-    );
+    const akg = await (req.query.all
+      ? paperSetterModel.find().select("-password")
+      : paperSetterModel.find().select(`-profile -college_id -password`));
     return res.status(200).json({
       data: akg,
       message: "Success.",
@@ -170,7 +158,7 @@ setterRouter.get("/:email", async (req, res) => {
 setterRouter.get("/subject/:subject", async (req, res) => {
   try {
     const { subject } = req.params;
-    const akg = await paperSetterModel.find({ subject });
+    const akg = await paperSetterModel.find({ "subject.code": subject });
     return res.status(200).json({
       data: akg,
       message: "Applications selected successfully.",

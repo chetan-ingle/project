@@ -14,7 +14,7 @@ const SetterMaterial = () => {
     data,
     loading: fetching,
     refetch,
-  } = useMaterial({ subject: setter?.subject as string });
+  } = useMaterial({ subject: setter?.subject.code as string });
 
   const material_data = [
     {

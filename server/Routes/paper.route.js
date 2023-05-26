@@ -8,7 +8,7 @@ paper_router.get("/:subject", async (req, res) => {
   const { subject } = req.params;
   try {
     const data = await paperModel.find({
-      subject,
+      "subject.code": subject,
     });
     return res.status(200).json({ data, message: "Success.", success: true });
   } catch (error) {
@@ -24,12 +24,14 @@ paper_router.post("/create", async (req, res) => {
     {
       year: 3,
       setter: {
-        name: "Sanket Gawande",
-        id: "6456b0100136638de8d6e626",
+        name: "Aniket Tote",
+        id: "6465c0445b9ab09efc0b163c",
       },
       date: new Date(),
-      subject_code: "UIHI8090UU8J",
-      subject: "Compiler design",
+      subject: {
+        name: "Compiler Design",
+        code: "COC0J5IL96DCE8",
+      },
       total_marks: 60,
       duration: 180,
       file_url: "http://localhost:6789/static/offer-letter-xomoy-signedpdf.pdf",
@@ -37,12 +39,14 @@ paper_router.post("/create", async (req, res) => {
     {
       year: 2,
       setter: {
-        name: "Sushant Gawande",
-        id: "6456b0100136638de8d6e626",
+        name: "chetan ingle",
+        id: "6465df765b9ab09efc0b1661",
       },
       date: new Date(),
-      subject_code: "904U98YTJGIMOK",
-      subject: "maths",
+      subject: {
+        name: "Geography",
+        code: "GE15JKMK7I9L93",
+      },
       total_marks: 60,
       duration: 180,
       file_url: "http://localhost:6789/static/offer-letter-xomoy-signedpdf.pdf",

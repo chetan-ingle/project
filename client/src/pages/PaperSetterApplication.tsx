@@ -6,16 +6,22 @@ export default function PaperSetterApplication() {
   const [profile, setProfile] = useState("");
   const [college_id, setCollege_id] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [subjects, setSubjects] = useState([]);
+
+
   const handleSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
     const payload = extractFormData(event.currentTarget);
-
+    if (!payload.subject) {
+      return alert('Please select subject')
+    }
     const req = await fetch(`${BASE_URL}/application/create`, {
       method: "post",
       body: JSON.stringify({
         payload: {
           ...payload,
+         
           profile,
           college_id,
         },
@@ -61,6 +67,7 @@ export default function PaperSetterApplication() {
   //  change title
   useEffect(() => {
     document.title = "Paper Setter Application";
+    fetch(BASE_URL + '/subject').then(a => a.json()).then(a => setSubjects(a.data))
   }, []);
 
   return (
@@ -70,7 +77,8 @@ export default function PaperSetterApplication() {
         onSubmit={handleSubmit}
         className="bg-white p-12 rounded-lg mb-4 w-11/12 max-w-[700px] mx-auto"
       >
-        <input type="hidden" name="role" value={"setter"} />
+        <input
+          required type="hidden" name="role" value={"setter"} />
         <div className="mb-4 flex-1  flex-wrap flex flex-col space-y-4 py-6">
           <label
             htmlFor="profile-image"
@@ -84,10 +92,10 @@ export default function PaperSetterApplication() {
           </label>
 
           <input
+            required
             type="file"
             name="profile-image"
             id="profile-image"
-            required
             className="file:bg-purple-600 file:py-2 file:px-3 file:text-white w-max file:border-none h-max"
             accept=".jpg,.jpeg,.png"
             onChange={(e) => handleFile(e, setProfile)}
@@ -106,6 +114,7 @@ export default function PaperSetterApplication() {
               First name:
             </label>
             <input
+              required
               type="text"
               name="fname"
               id="fname"
@@ -120,6 +129,7 @@ export default function PaperSetterApplication() {
               Last Name:
             </label>
             <input
+              required
               type="text"
               name="lname"
               id="lname"
@@ -137,6 +147,7 @@ export default function PaperSetterApplication() {
               Email:
             </label>
             <input
+              required
               type="email"
               name="email"
               id="email"
@@ -151,6 +162,7 @@ export default function PaperSetterApplication() {
               Phone:
             </label>
             <input
+              required
               type="tel"
               name="phone"
               id="phone"
@@ -166,21 +178,19 @@ export default function PaperSetterApplication() {
               className="block text-gray-700 font-bold mb-2"
             >
               Subject:
-              <small className="px-2 font-normal"></small>
+
             </label>
-            <input
-              list="sub-list"
-              type="text"
-              name="subject"
-              id="subject"
+            <select
               className="shadow appearance-none border-slate-600 border-2 focus:border-sky-600 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
-            <datalist id="sub-list">
-              <option value="cd"></option>
-              <option value="chem"></option>
-              <option value="dsa"></option>
-              <option value="m3"></option>
-            </datalist>
+              name="subject" required id="subject">
+              <option value="">--Select subject--</option>
+              {
+                (subjects ?? []).map(({ code, name }: { code: string, name: string }) => {
+                  return <option value={code}>{name}</option>
+                })
+              }
+            </select>
+
           </div>
 
           <div className="mb-4 w-full md:w-auto flex-1">
@@ -191,6 +201,7 @@ export default function PaperSetterApplication() {
               Qualification:
             </label>
             <input
+              required
               type="text"
               name="qualification"
               id="qualification"
@@ -208,6 +219,7 @@ export default function PaperSetterApplication() {
               Institute:
             </label>
             <input
+              required
               type="text"
               name="institute"
               id="institute"
@@ -223,6 +235,7 @@ export default function PaperSetterApplication() {
               Experience (in months):
             </label>
             <input
+              required
               type="number"
               placeholder="eg. 23"
               name="experience"
@@ -240,6 +253,7 @@ export default function PaperSetterApplication() {
               Institute Id:
             </label>
             <input
+              required
               onChange={(e) => handleFile(e, setCollege_id)}
               type="file"
               name="instituteid"

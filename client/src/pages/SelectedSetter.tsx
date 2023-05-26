@@ -11,18 +11,18 @@ export default function () {
   const [setter, setSetter] = useState<ApplicationType[] | null>(null);
 
   const { moderator, setModerator } = useContext(userContext);
-  const [subject, setSubject] = useState<string>(moderator?.subject[0] || "");
+  const [subject, setSubject] = useState<ApplicationType['subject']>(moderator?.subject[0] || "");
 
   const [loading, setLoading] = useState<boolean>(false);
   const [mail_loading, setMailLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   async function getSetters() {
-    
+
     setLoading(true);
 
     setSetter([]);
-    const req = await fetch(`${BASE_URL}/setter/subject/${subject}`);
+    const req = await fetch(`${BASE_URL}/setter/subject/${subject.code}`);
     const setter = await req.json();
     setLoading(false);
     setSetter(setter.data);
@@ -57,21 +57,20 @@ export default function () {
         <main className="pt-6 bg-slate-200 pb-6 px-8 flex items-center justify-between">
           <p className="text-lg">
             Showing applications for
-            <span className="text-purple-600 font-bold ml-2">{subject}</span>
+            <span className="text-purple-600 font-bold ml-2">{subject.name}</span>
           </p>
           <div className="">
-            {moderator?.subject.map((sub: string, index: number) => {
+            {moderator?.subject.map((sub: ApplicationType['subject'], index: number) => {
               return (
                 <span
                   key={index}
                   onClick={() => setSubject(sub)}
-                  className={`cursor-pointer  border border-current bg-white-600 px-4 py-2 rounded-md ml-2 ${
-                    subject === sub
-                      ? "bg-purple-700 text-white"
-                      : "text-purple-600"
-                  }`}
+                  className={`cursor-pointer  border border-current bg-white-600 px-4 py-2 rounded-md ml-2 ${subject === sub
+                    ? "bg-purple-700 text-white"
+                    : "text-purple-600"
+                    }`}
                 >
-                  {sub}
+                  {sub?.name}
                 </span>
               );
             })}
@@ -130,7 +129,7 @@ export default function () {
                         <td>
                           <a
                             className="underline text-sky-600"
-                            onClick={() => {}}
+                            onClick={() => { }}
                           >
                             View
                           </a>
@@ -138,7 +137,7 @@ export default function () {
                         <td>{name}</td>
                         <td>{email}</td>
                         <td>{phone}</td>
-                        <td>{subject}</td>
+                        <td>{subject.name}</td>
 
                         <td>{institute}</td>
                         <td>
@@ -155,7 +154,7 @@ export default function () {
                             <button
                               disabled={mail_loading}
                               onClick={() =>
-                                send_notification({ email, name, subject })
+                                send_notification({ email, name, subject: subject.name })
                               }
                               title="Send notification"
                               className=" text-slate-700 hover:bg-slate-200  px-4 py-2 rounded-md"

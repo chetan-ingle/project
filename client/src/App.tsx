@@ -17,10 +17,17 @@ import ErrorPage from "./pages/404";
 import SetterDashboard from "./pages/SetterDashboard";
 import SetterMaterial from "./pages/SetterMaterial";
 import SetterNotification from "./pages/SetterNotification";
+import UploadPaper from "./pages/UploadPaper";
+import Profile from "./pages/Profile";
+
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+  },
+  {
+    path: "/profile",
+    element: <Profile />,
   },
 
   // moderator routes
@@ -57,6 +64,10 @@ const router = createBrowserRouter([
     path: "/dashboard/setter/notification",
     element: <SetterNotification />,
   },
+  {
+    path: "/dashboard/setter/upload-paper",
+    element: <UploadPaper />,
+  },
   // examiner routes
   {
     path: "/dashboard/setter",
@@ -89,3 +100,4 @@ function App() {
 }
 
 export default App;
+

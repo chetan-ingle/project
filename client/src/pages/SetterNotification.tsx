@@ -25,10 +25,10 @@ function SetterNotification() {
                   onClick={() => setNotification(i)}
                   className="bg-white rounded-md shadow-md p-4 mb-4"
                 >
-                  <h4 className="text-xl line-clamp-1 underline cursor-pointer font-semibold">
+                  <h4 className="line-clamp-1 capitalize cursor-pointer font-semibold">
                     {i.subject}
                   </h4>
-                  <p className="text-lg">
+                  <p className="text-sm text-slate-600">
                     {new Date(i.createdAt).toLocaleString("en-in", {
                       dateStyle: "full",
                     })}

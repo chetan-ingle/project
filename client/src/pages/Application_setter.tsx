@@ -13,7 +13,7 @@ export interface ApplicationType {
   experience: number;
   qualification: string;
   institute: string;
-  subject: string;
+  subject: { name: string, code: string };
   email: string;
   phone: string;
   address: string;
@@ -26,6 +26,7 @@ export default function SetterApplications() {
   const { moderator, setModerator } = useContext(userContext);
   const [loading, setLoading] = useState<boolean>(false);
   // const [apps, setApps] = useState<ApplicationType[] | null>(null);
+  console.log(moderator)
   const { data: apps, error, message, query } = useQuery(getApplication);
   const getApplications = async (subject: string) => {
     await query({ subject });
@@ -34,14 +35,15 @@ export default function SetterApplications() {
       JSON.stringify(new Date().getTime())
     );
   };
-  const [subject, setSubject] = useState<string>(moderator?.subject[0]);
+  const [subject, setSubject] = useState<ApplicationType['subject']>(moderator?.subject[0]);
+  console.log(subject)
   useEffect(() => {
-    getApplications(subject);
+    getApplications(subject?.code);
   }, [subject]);
 
   useEffect(() => {
     setSubject(moderator?.subject[0]);
-  }, [moderator?.subject[0]]);
+  }, [moderator?.subject[0].code]);
 
   async function handleSelected(evt: ChangeEvent<HTMLFormElement>) {
     evt.preventDefault();
@@ -52,7 +54,9 @@ export default function SetterApplications() {
       )
     ).map((el) => el.value);
     console.log(selected);
+
     const res = await selectService(selected, subject);
+
     if (res.message) {
       toast.success(res.message);
       setLoading(false);
@@ -67,21 +71,20 @@ export default function SetterApplications() {
         <main className="pt-6 bg-slate-200 pb-6 px-8 flex items-center justify-between">
           <p className="text-lg">
             Showing applications for
-            <span className="text-purple-600 font-bold ml-2">{subject}</span>
+            <span className="text-purple-600 font-bold ml-2">{subject?.name}</span>
           </p>
           <div className="">
-            {moderator?.subject.map((sub: string, index: number) => {
+            {moderator?.subject.map((sub: ApplicationType['subject'], index: number) => {
               return (
                 <span
                   key={index}
                   onClick={() => setSubject(sub)}
-                  className={`cursor-pointer  border border-current bg-white-600 px-4 py-2 rounded-md ml-2 ${
-                    subject === sub
-                      ? "bg-purple-700 text-white"
-                      : "text-purple-600"
-                  }`}
+                  className={`cursor-pointer  border border-current bg-white-600 px-4 py-2 rounded-md ml-2 ${subject === sub
+                    ? "bg-purple-700 text-white"
+                    : "text-purple-600"
+                    }`}
                 >
-                  {sub}
+                  {sub?.name}
                 </span>
               );
             })}
@@ -154,7 +157,7 @@ export default function SetterApplications() {
                         <td>{name}</td>
                         <td>{email}</td>
                         <td>{phone}</td>
-                        <td>{subject}</td>
+                        <td>{subject?.name}</td>
 
                         <td>{institute}</td>
                         <td>
