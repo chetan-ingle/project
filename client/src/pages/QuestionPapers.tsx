@@ -15,23 +15,24 @@ import useMaterial from "../hooks/useMaterial";
 import { AiFillDelete } from "react-icons/ai";
 import { get_paper } from "../service/paper.service";
 import extractFormData from "../utils/extractFormData";
+import { ApplicationType } from "./Application_setter";
 
 const QuestionPapers = () => {
-  const { moderator : user } = useContext(userContext);
+  const { moderator: user } = useContext(userContext);
   const [doc_link, setDocLink] = useState<null | string>(null);
-  const [subject, setSubject] = useState<string>(user?.subject[0]);
+  const [subject, setSubject] = useState<ApplicationType['subject']>(user?.subject[0]);
   const [loading, setLoading] = useState<boolean>(false);
   const [paper, setPapers] = useState<null | any[]>(null);
   const [accepted, setAccepted] = useState(null);
   async function fetch_papers() {
     setLoading(true);
-    const data = await get_paper(subject);
+    const data = await get_paper(subject.code);
     setLoading(false);
     setPapers(data.data);
   }
   useEffect(() => {
-    fetch_papers();
-  }, [subject]);
+    subject?.code && fetch_papers();
+  }, [subject?.name]);
 
   async function handle_paper_schedule_action(e: ChangeEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -40,31 +41,34 @@ const QuestionPapers = () => {
       ...formdata,
       paper_id: accepted,
       selected_by: user?._id,
-      subject_code: "BD5UJKERNGJKG",
+      subject,
     };
     alert(JSON.stringify(payload));
   }
+  useEffect(() => {
+    setSubject(user?.subject[0])
+    console.log(user?.subject[0])
+  }, [user])
   return (
     <Layout>
       <main className="h-[calc(100vh-140px)]">
         <main className="pt-6 bg-slate-200 pb-6 px-8 flex items-center justify-between">
           <p className="text-lg">
             Showing question papers for
-            <span className="text-purple-600 font-bold ml-2">{subject}</span>
+            <span className="text-purple-600 font-bold ml-2">{subject?.name}</span>
           </p>
           <div className="">
-            {user?.subject.map((sub: string, index: number) => {
+            {user?.subject.map((sub: ApplicationType['subject'], index: number) => {
               return (
                 <span
                   key={index}
                   onClick={() => setSubject(sub)}
-                  className={`cursor-pointer  border border-current bg-white-600 px-4 py-2 rounded-md ml-2 ${
-                    subject === sub
-                      ? "bg-purple-700 text-white"
-                      : "text-purple-600"
-                  }`}
+                  className={`cursor-pointer  border border-current bg-white-600 px-4 py-2 rounded-md ml-2 ${subject === sub
+                    ? "bg-purple-700 text-white"
+                    : "text-purple-600"
+                    }`}
                 >
-                  {sub}
+                  {sub?.name}
                 </span>
               );
             })}
@@ -86,10 +90,10 @@ const QuestionPapers = () => {
                   <hr />
                   <section className="py-4 mb-3">
                     <p>
-                      Subject: <b>{subject}</b>
+                      Subject: <b>{subject?.name}</b>
                     </p>
                     <p>
-                      Subject code : <b>{"JFHGDIJI8U549FIU"}</b>
+                      Subject code : <b>{subject?.code}</b>
                     </p>
                   </section>
 

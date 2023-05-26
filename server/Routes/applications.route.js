@@ -39,6 +39,23 @@ applyRouter.post("/create", async (req, res) => {
   }
 });
 
+applyRouter.get("/", async (req, res) => {
+  try {
+    const data = await applicationModel.find().select("-profile -college_id");
+    res.status(203).json({
+      data,
+      success: true,
+      message: "Application fetched",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(203).json({
+      data: null,
+      success: false,
+      message: "Something went wrong.",
+    });
+  }
+});
 applyRouter.get("/setter/:subject", async (req, res) => {
   const { subject } = req.params;
   try {

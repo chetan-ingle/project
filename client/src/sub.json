@@ -1,0 +1,105 @@
+[
+  { "name": "Compiler Design", "code": "COC0J5IL96DCE8" },
+  { "name": "History", "code": "HIG45LG90H587B" },
+  { "name": "Marathi", "code": "MAN3GMAFMH0FD9" },
+  { "name": "Geography", "code": "GE15JKMK7I9L93" },
+  { "name": "DBMS", "code": "DBAHMJCI2E9216" },
+  { "name": "Bid data analytics", "code": "BID03L9GIC41N7" },
+  { "name": "Computer Network", "code": "COH6NHKDNDCB27" },
+  { "name": "Artificial Intelligence", "code": "ARCN8HLAJAF765" },
+  { "name": "Programming Languages", "code": "PR0C8AEA23C7EK6" },
+  { "name": "Data Structures and Algorithms", "code": "DAHI164I3KC7B8" },
+  { "name": "Database Management Systems", "code": "DAC2MGJE72J458" },
+  { "name": "Computer Networks", "code": "CO5DEJJ77GE0K" },
+  { "name": "Operating Systems", "code": "OP1K3HC6MG5L3KE" },
+  { "name": "Software Engineering", "code": "SO50H9F5A4EKNC" },
+  { "name": "Object-Oriented Programming", "code": "OBKA4NB920LKIB" },
+  { "name": "Web Development", "code": "WELLMKHJ3N69C6" },
+  { "name": "Artificial Intelligence", "code": "ARB8IHJF34M69J" },
+  { "name": "Machine Learning", "code": "MA26DJBLJIL3JKC" },
+  { "name": "Computer Architecture", "code": "CO9GNFK1D7MJG8" },
+  { "name": "Computer Graphics", "code": "COJJ3A46DHBG73" },
+  { "name": "Cybersecurity", "code": "CYFADFC077HKCH" },
+  { "name": "Human-Computer Interaction (HCI)", "code": "HU27EHEK99L76KA" },
+  { "name": "Data Science", "code": "DA5419CEF4DCBB" },
+  { "name": "Cloud Computing", "code": "CL2M0NFM16I5JGH" },
+  { "name": "Mobile App Development", "code": "MOD1NE5HB1CABM" },
+  { "name": "Computer Vision", "code": "COLF2028DAACAD" },
+  { "name": "Natural Language Processing (NLP)", "code": "NA7NM1JK2JHI4B" },
+  { "name": "Big Data Analytics", "code": "BIHMIF4N5J5FLF" }
+]
+
+
+
+{
+  "data": 
+  [
+    {
+      "_id": "6465c0445b9ab09efc0b163c",
+      "name": "Aniket Tote",
+      "experience": 23,
+      "qualification": "btech",
+      "institute": "gcoey",
+      "subject": { "name": "Compiler Design", "code": "COC0J5IL96DCE8" },
+      "email": "anikettote2001@gmail.com",
+      "phone": "7020875342",
+      "address": "fdjndaknfkad",
+      "previousWork": [],
+      "__v": 0
+    },
+    {
+      "_id": "6465df765b9ab09efc0b1661",
+      "name": "chetan ingle",
+      "experience": 31,
+      "qualification": "btech",
+      "institute": "gcoey",
+      "subject": { "name": "Compiler Design", "code": "COC0J5IL96DCE8" },
+      "email": "cbidubcuiw@gmail.com",
+      "phone": "54485",
+      "address": "cdc",
+      "previousWork": [],
+      "__v": 0
+    },
+    {
+      "_id": "646cb0f97d6fcc54db06d85e",
+      "name": "aniket tote",
+      "experience": 99,
+      "qualification": "btech",
+      "institute": "gcoey",
+      "subject": { "name": "Geography", "code": "GE15JKMK7I9L93" },
+      "email": "inglechetanmonster@gmail.com",
+      "phone": "559955",
+      "address": "ytl",
+      "previousWork": [],
+      "__v": 0
+    },
+    {
+      "_id": "646cb1377d6fcc54db06d860",
+      "name": "chetan ingle",
+      "experience": null,
+      "qualification": "b",
+      "institute": "",
+      "subject": { "name": "Geography", "code": "GE15JKMK7I9L93" },
+      "email": "sushantnirphal@gmail.com",
+      "phone": "8595",
+      "address": "",
+      "previousWork": [],
+      "__v": 0
+    },
+    {
+      "_id": "646cb1807d6fcc54db06d862",
+      "name": "chetan ingle",
+      "experience": 65,
+      "qualification": "btech",
+      "institute": "gcoey",
+      "subject": { "name": "Geography", "code": "GE15JKMK7I9L93" },
+      "email": "sushnirphal@gmail.com",
+      "phone": "8561",
+      "address": "ytl",
+      "previousWork": [],
+      "__v": 0
+    }
+  ],
+  "message": "Success.",
+  "success": true
+}

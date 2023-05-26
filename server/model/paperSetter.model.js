@@ -6,7 +6,10 @@ const setterSchema = Schema(
     experience: Number,
     qualification: String,
     institute: String,
-    subject: String,
+    subject: {
+      name: String,
+      code: String,
+    },
     email: {
       type: String,
       unique: true,

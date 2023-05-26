@@ -26,9 +26,6 @@ const subjectSchema = Schema({
     type: String,
     unique: true,
   },
-  chapters: [String],
-  material: [materialSchema],
-  previousPapers: [prevPaperSchema],
 });
 
 export default model("subjects", subjectSchema);

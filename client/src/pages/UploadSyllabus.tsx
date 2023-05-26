@@ -7,9 +7,10 @@ import { userContext } from '../../Context/UserContext';
 import { toast } from 'react-hot-toast';
 import useMaterial from '../hooks/useMaterial';
 import { AiFillDelete } from 'react-icons/ai'
+import { ApplicationType } from './Application_setter';
 
 const UploadSyllabus = () => {
-  const { moderator :user } = useContext(userContext)
+  const { moderator: user } = useContext(userContext)
   const [doc_link, setDocLink] = useState<null | string>(null);
   const [upload_doc, set_upload_doc] = useState<boolean>(false);
   const [name, setName] = useState<null | string>(null);
@@ -53,7 +54,7 @@ const UploadSyllabus = () => {
     // refetch uploaded docs
     refetch();
   }
-  const { data, loading: fetching, refetch } = useMaterial({id:user?._id });
+  const { data, loading: fetching, refetch } = useMaterial({ id: user?._id });
   const material_data = [
     {
       title: 'Syllabus',
@@ -118,9 +119,9 @@ const UploadSyllabus = () => {
           >
             <option value="">---Select subject---</option>
             {
-              user?.subject.map((item: string) =>
+              user?.subject.map((item: ApplicationType['subject']) =>
 
-                <option key={item} value={item} className='capitalize'>{item}</option>
+                <option key={item.code} value={item.code} className='capitalize'>{item.name}</option>
               )
             }
 
@@ -218,7 +219,7 @@ const UploadSyllabus = () => {
                     className='flex pt-4 flex-col space-y-3'
                   >
                     {
-                      data?.map((item: { desc: string, url: string, _id: string , subject : string}) =>
+                      data?.map((item: { desc: string, url: string, _id: string, subject: string }) =>
                         <div
                           key={item._id}
                           className='flex py-2 justify-between px-4 items-center bg-slate-100'
@@ -228,12 +229,12 @@ const UploadSyllabus = () => {
                             onClick={() => setDocLink('http://localhost:6789/static/' + item?.url)}
                           >
                             <p
-                            className='underline'
+                              className='underline'
                             >
                               {item.desc}
                             </p>
                             <small className='px-2 text-red-500 text-sm no-underline'>
-                            (  {item.subject})
+                              (  {user?.subject?.find(a => a.code === item.subject).name})
                             </small>
                           </button>
                           <span
