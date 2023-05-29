@@ -1,18 +1,12 @@
 import express from "express";
 import syllabusModel from "../model/syllabus.model.js";
 import fs from "fs";
-import os from "os";
-import { exec } from "child_process";
+import { ostype, path } from "../utils/os.js";
 const SyllabusRouter = express.Router();
-let path;
-let ostype = os.type();
-exec("pwd", (_, dir) => {
-  path = dir;
-  console.log(_, os.type(), path);
-});
 
 SyllabusRouter.post("/create", async (req, res) => {
   const { type, by, name: desc, subject } = req.body;
+  if(!req.files) return res.status(400).json({data: null, error: true, message: "No file found."})
   const { size, mimetype, name } = req.files.file;
   const filename = `${name}.${mimetype.split("/")[1]}`;
   req.files.file.mv(

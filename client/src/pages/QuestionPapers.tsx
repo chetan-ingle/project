@@ -6,24 +6,31 @@ import React, {
   useState,
 } from "react";
 import Layout from "../Partials/Layout";
-import FileViewer from "react-file-viewer";
-import { FileUploader } from "react-drag-drop-files";
-import { delete_material, put_material } from "../service/material.service";
 import { userContext } from "../../Context/UserContext";
-import { toast } from "react-hot-toast";
-import useMaterial from "../hooks/useMaterial";
-import { AiFillDelete } from "react-icons/ai";
-import { get_paper } from "../service/paper.service";
+
+import { accept_paper, get_paper } from "../service/paper.service";
 import extractFormData from "../utils/extractFormData";
 import { ApplicationType } from "./Application_setter";
+import useViewPaperModerator from "../hooks/useViewPaperModerator";
+import { toast } from "react-hot-toast";
 
 const QuestionPapers = () => {
   const { moderator: user } = useContext(userContext);
-  const [doc_link, setDocLink] = useState<null | string>(null);
-  const [subject, setSubject] = useState<ApplicationType['subject']>(user?.subject[0]);
+
+  const [viewPaper, setViewPaper] = useState<boolean>(false);
+  const [subject, setSubject] = useState<ApplicationType["subject"]>(
+    user?.subject[0]
+  );
+
+  const { Viewer } = useViewPaperModerator(user?.email, subject?.code);
+
   const [loading, setLoading] = useState<boolean>(false);
+  const [scheduling, setScheduling] = useState<boolean>(false);
   const [paper, setPapers] = useState<null | any[]>(null);
-  const [accepted, setAccepted] = useState(null);
+  const [accepted, setAccepted] = useState<{
+    code: string;
+    name: string;
+  } | null>(null);
   async function fetch_papers() {
     setLoading(true);
     const data = await get_paper(subject.code);
@@ -39,39 +46,57 @@ const QuestionPapers = () => {
     const formdata = extractFormData(e.target);
     const payload = {
       ...formdata,
-      paper_id: accepted,
-      selected_by: user?._id,
       subject,
+      status: {
+        time: formdata.date,
+        allow_before: formdata.before,
+      },
     };
-    alert(JSON.stringify(payload));
+    setScheduling(true);
+    const { data, error, message } = await accept_paper(payload);
+    //  upadte the paper status
+    fetch_papers();
+    setScheduling(false);
+    if (error) {
+      return toast(message, { position: "top-right", icon: "❌" });
+    }
+    toast(message, { position: "top-right", icon: "✅" });
   }
+
   useEffect(() => {
-    setSubject(user?.subject[0])
-    console.log(user?.subject[0])
-  }, [user])
+    setSubject(user?.subject[0]);
+  }, [user]);
   return (
     <Layout>
       <main className="h-[calc(100vh-140px)]">
         <main className="pt-6 bg-slate-200 pb-6 px-8 flex items-center justify-between">
           <p className="text-lg">
             Showing question papers for
-            <span className="text-purple-600 font-bold ml-2">{subject?.name}</span>
+            <span className="text-purple-600 font-bold ml-2">
+              {subject?.name}
+            </span>
           </p>
           <div className="">
-            {user?.subject.map((sub: ApplicationType['subject'], index: number) => {
-              return (
-                <span
-                  key={index}
-                  onClick={() => setSubject(sub)}
-                  className={`cursor-pointer  border border-current bg-white-600 px-4 py-2 rounded-md ml-2 ${subject === sub
-                    ? "bg-purple-700 text-white"
-                    : "text-purple-600"
+            {user?.subject.map(
+              (sub: ApplicationType["subject"], index: number) => {
+                return (
+                  <span
+                    key={index}
+                    onClick={() => {
+                      setSubject(sub);
+                      setAccepted(null);
+                    }}
+                    className={`cursor-pointer  border border-current bg-white-600 px-4 py-2 rounded-md ml-2 ${
+                      subject === sub
+                        ? "bg-purple-700 text-white"
+                        : "text-purple-600"
                     }`}
-                >
-                  {sub?.name}
-                </span>
-              );
-            })}
+                  >
+                    {sub?.name}
+                  </span>
+                );
+              }
+            )}
           </div>
         </main>
         <main className="flex flex-col h-full md:flex-row w-full">
@@ -90,32 +115,11 @@ const QuestionPapers = () => {
                   <hr />
                   <section className="py-4 mb-3">
                     <p>
-                      Subject: <b>{subject?.name}</b>
+                      Subject: <b>{accepted?.name}</b>
                     </p>
                     <p>
-                      Subject code : <b>{subject?.code}</b>
+                      Subject code : <b>{accepted?.code}</b>
                     </p>
-                  </section>
-
-                  <hr />
-                  <section className="flex mb-3 py-3 items-center">
-                    <div className="w-1/2 p-2">
-                      <label htmlFor="year">Standard/year</label>
-                      <input
-                        className="w-full border py-2 px-4 rounded-lg"
-                        type="number"
-                        name="year"
-                      />
-                    </div>
-
-                    <div className="w-1/2 p-2">
-                      <label htmlFor="year">Semester (if applicable)</label>
-                      <input
-                        className="w-full border py-2 px-4 rounded-lg"
-                        type="number"
-                        name="year"
-                      />
-                    </div>
                   </section>
 
                   <hr />
@@ -125,17 +129,21 @@ const QuestionPapers = () => {
                       <label htmlFor="year">Date</label>
                       <input
                         className="w-full border py-2 px-4 rounded-lg"
-                        type="date"
+                        type="datetime-local"
                         name="date"
+                        required
                       />
                     </div>
-
                     <div className="w-1/2 p-2">
-                      <label htmlFor="year">Time </label>
+                      <label htmlFor="before">Release before (minutes)</label>
                       <input
                         className="w-full border py-2 px-4 rounded-lg"
-                        type="time"
-                        name="time"
+                        type="number"
+                        max={60}
+                        min={0}
+                        name="before"
+                        required
+                        defaultValue={0}
                       />
                     </div>
                   </section>
@@ -147,8 +155,11 @@ const QuestionPapers = () => {
                     >
                       Cancel
                     </button>
-                    <button className="border border-green-600 text-white bg-green-500 px-4 py-2 rounded-lg">
-                      Schedule
+                    <button
+                      disabled={scheduling}
+                      className="border border-green-600 text-white bg-green-600 px-4 py-2 rounded-lg"
+                    >
+                      {scheduling ? "Scheduling..." : "Schedule"}
                     </button>
                   </main>
                 </form>
@@ -179,45 +190,67 @@ const QuestionPapers = () => {
                       })}
                     </span>
                   </summary>
-                  <div className="flex pt-4 space-x-4 items-center">
+                  <div
+                    style={{
+                      display: data?.status.accepted ? "none" : "inline-block",
+                    }}
+                    className="flex pt-4 space-x-4 items-center"
+                  >
                     <button
                       className="py-1 px-4 bg-sky-500 text-white rounded-md"
-                      onClick={() => setDocLink(data.file_url)}
+                      onClick={() => setViewPaper(true)}
                     >
                       View
                     </button>
                     <button
-                      onClick={() => setAccepted(data?._id)}
+                      onClick={() =>
+                        setAccepted({
+                          name: data?.subject?.name,
+                          code: data?.subject?.code,
+                        })
+                      }
                       className="py-1 px-4 bg-green-600 text-white rounded-md"
                     >
                       Accept
                     </button>
                   </div>
+                  <main
+                    className="p-4 bg-green-600/10 text-green-700 rounded-md mt-4"
+                    style={{
+                      display: data?.status.accepted ? "block" : "none",
+                    }}
+                  >
+                    This paper is scheduled for{" "}
+                    {
+                      <b>
+                        {new Date(data?.status.time).toLocaleString("en-us", {
+                          dateStyle: "medium",
+                          timeStyle: "short",
+                        })}
+                      </b>
+                    }
+                  </main>
                 </details>
               ))}
           </section>
           <section className="w-full bg-white h-full flex justify-center overflow-y-auto md:w-2/3 border-l">
-            {!doc_link && (
+            {!viewPaper && (
               <>
                 <div className="w-full text-center mt-12 h-max text-2xl font-bold text-slate-300">
                   Click on view button to see question paper
                 </div>
               </>
             )}
-            {doc_link && (
+            {viewPaper && (
               <>
                 <button
-                  onClick={() => setDocLink(null)}
+                  onClick={() => setViewPaper(false)}
                   className="text-red-600 text-lg cursor-pointer z-20 absolute top-36  right-10"
                 >
                   close
                 </button>
                 <div className="w-full ">
-                  <FileViewer
-                    key={doc_link}
-                    fileType={"pdf"}
-                    filePath={doc_link}
-                  />
+                  <Viewer />
                 </div>
               </>
             )}
