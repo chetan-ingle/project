@@ -40,7 +40,7 @@ const ModeratorDashboard = () => {
             className="p-8 lg:p-12 text-xl bg-yellow-500 text-white rounded-md"
             to="/dashboard/moderator/question-papers"
           >
-            Questions/Papers
+            Questions Papers
           </Link>
           <Link
             className="p-8 lg:p-12 text-xl bg-green-500 text-white rounded-md"

@@ -8,13 +8,29 @@ const paperSchema = Schema({
   duration: Number,
   
   file_url: { type: String, required: true },
-  accepted: {
-    type: Boolean,
-    default: false,
+  status: {
+    accepted: {
+      type: Boolean,
+      default: false,
+    },
+    time: {
+      type: Date,
+      required: true,
+      default:"00",
+    },
+    allow_before: {
+      type: Number,
+      default: 0,
+    },
   },
+
   setter: {
     name: String,
-    id: String,
+    id: {
+      type: Schema.Types.ObjectId,
+      unique: true,
+      required: true,
+    },
   },
 });
 

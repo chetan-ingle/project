@@ -17,10 +17,11 @@ const examinerSchema = Schema(
     isVerified: Boolean,
     profile: String,
     password: String,
+    subjects: [{ name: String, code: String }],
     role: {
       type: String,
       default: "examiner",
-    },  
+    },
   },
   {
     timeStamps: true,
