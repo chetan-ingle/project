@@ -27,10 +27,10 @@ paper_router.post("/get/examiner-paper", async (req, res) => {
   const { email } = req.body;
   try {
     const examiner = await examinerModel.findOne({ email: email });
-    const codes = examiner.subjects.;
-    let papers = examiner.subjects.map(async (subject) => {
-      return await paperModel.findOne({ "subject.code": subject.code });
-    });
+    const codes = examiner.subjects.map(a => subject.code);
+    // let papers = examiner.subjects.map(async (subject) => {
+    //   return await paperModel.findOne({ "subject.code": subject.code });
+    // });
 
     // const data = await paperModel.find({
     //   "subject.code": subject,
