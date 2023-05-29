@@ -19,6 +19,8 @@ import SetterMaterial from "./pages/SetterMaterial";
 import SetterNotification from "./pages/SetterNotification";
 import UploadPaper from "./pages/UploadPaper";
 import Profile from "./pages/Profile";
+import ExaminerNotification from "./pages/ExaminerNotification";
+import DownloadPaper from "./pages/DownloadPaper";
 
 const router = createBrowserRouter([
   {
@@ -68,10 +70,22 @@ const router = createBrowserRouter([
     path: "/dashboard/setter/upload-paper",
     element: <UploadPaper />,
   },
-  // examiner routes
   {
     path: "/dashboard/setter",
     element: <SetterDashboard />,
+  },
+  // examiner routes
+  {
+    path: "/dashboard/examiner",
+    element: <ExaminerDashboard />,
+  },
+  {
+    path: "/dashboard/examiner/notification",
+    element: <ExaminerNotification />,
+  },
+  {
+    path: "/dashboard/examiner/download-paper",
+    element: <DownloadPaper />,
   },
   // login routes
   {
