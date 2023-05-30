@@ -18,7 +18,7 @@ const Home = () => {
       <div className="center w-screen flex justify-center items-center flex-col  ">
         <div
           style={{ display: alreadyLoggedIn ? "flex" : "none" }}
-          className="bg-white justify-end rounded-md w-11/12 flex-wrap p-4 flex items-center  shadow-lg text-sm"
+          className="bg-white mt-12 justify-end rounded-md w-11/12 flex-wrap p-4 flex items-center  shadow-lg text-sm"
         >
           <main className=" mr-auto">
             <h1 className="text-xl text-center mb-4">

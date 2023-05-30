@@ -2,6 +2,7 @@ import express from "express";
 import moderatorModel from "../model/moderator.model.js";
 import examinerModel from "../model/examiner.model.js";
 import paperSetterModel from "../model/paperSetter.model.js";
+import adminModel from "../model/admin.model.js";
 
 const loginRouter = express.Router();
 
@@ -45,12 +46,12 @@ loginRouter.post("/examiner", async (req, res) => {
 loginRouter.post("/setter", async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log(email, password)
+    console.log(email, password);
     const akg = await paperSetterModel.findOne({
       email,
       password,
     });
-   
+
     if (!akg) {
       return res.status(400).json({ data: null, error: "No user found." });
     }
@@ -63,4 +64,25 @@ loginRouter.post("/setter", async (req, res) => {
   }
 });
 
+//  setter login
+loginRouter.post("/admin", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    console.log(email, password);
+    const akg = await adminModel.findOne({
+      email,
+      password,
+    });
+
+    if (!akg) {
+      return res.status(400).json({ data: null, error: "No user found." });
+    }
+    return res
+      .status(200)
+      .json({ data: akg, message: "logged in as the Admin", success: true });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({ data: null, error: "Something went wrong." });
+  }
+});
 export default loginRouter;

@@ -34,6 +34,25 @@ ModeratorRouter.get("/", async (req, res) => {
   }
 });
 
+//  get all assigned subjects
+ModeratorRouter.get("/subjects/assigned", async (req, res) => {
+  try {
+    const moderators = await moderatorModel.find({}).select("subject");
+    const data = moderators.map((i) => i.subject.map((i) => i.code)).flat();
+
+    return res
+      .status(200)
+      .json({
+        data,
+        message: "Already assigned subjects disabled.",
+        success: true,
+      });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({ data: null, error: "Something went wrong." });
+  }
+});
+
 // get a moderator by id
 ModeratorRouter.get("/:id", async (req, res) => {
   try {

@@ -61,6 +61,7 @@ const QuestionPapers = () => {
       return toast(message, { position: "top-right", icon: "❌" });
     }
     toast(message, { position: "top-right", icon: "✅" });
+    setAccepted(null)
   }
 
   useEffect(() => {

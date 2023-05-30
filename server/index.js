@@ -17,6 +17,7 @@ import paper_router from "./Routes/paper.route.js";
 import ModeratorRouter from "./Routes/moderator.route.js";
 import notificationRouter from "./Routes/notification.route.js";
 import SubjectRouter from "./Routes/subject.route.js";
+import AdminRouter from "./Routes/admin.route.js";
 const PORT = process.env.PORT || 6789;
 const app = express();
 app.use(
@@ -45,6 +46,7 @@ app.use("/api/mail/", emailRouter);
 app.use("/api/add/", addRouter);
 app.use("/api/notification/", notificationRouter);
 app.use("/api/subject/", SubjectRouter);
+app.use("/api/admin/", AdminRouter);
 
 app.get("/", async (req, res) => {
   try {

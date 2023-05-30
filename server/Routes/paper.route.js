@@ -5,6 +5,8 @@ import examinerModel from "../model/examiner.model.js";
 import { ostype, path } from "../utils/os.js";
 const paper_router = Router();
 import fs from "fs";
+import { sendMail } from "../email/sendMail.js";
+import notify_examiner from "../template/notify_examiner.js";
 
 // get papers by id(paper  id)
 paper_router.get("/:subject", async (req, res) => {
@@ -27,7 +29,8 @@ paper_router.post("/get/examiner-paper", async (req, res) => {
   const { email } = req.body;
   try {
     const examiner = await examinerModel.findOne({ email: email });
-    const codes = examiner.subjects.map(a => subject.code);
+    const codes = examiner.subjects.map((a) => a.code);
+
     // let papers = examiner.subjects.map(async (subject) => {
     //   return await paperModel.findOne({ "subject.code": subject.code });
     // });
@@ -36,9 +39,17 @@ paper_router.post("/get/examiner-paper", async (req, res) => {
     //   "subject.code": subject,
     // });
     // data.file_url = undefined;
+    const papers_to_send = await paperModel
+      .find({
+        "status.accepted": true,
+        "subject.code": {
+          $in: codes,
+        },
+      })
+      .select("-file_url -setter -date");
     return res
       .status(200)
-      .json({ data: papers, message: "success.", success: true });
+      .json({ data: papers_to_send, message: "success.", success: true });
   } catch (error) {
     return res
       .status(400)
@@ -55,14 +66,9 @@ paper_router.post("/", async (req, res) => {
 
   const { size, mimetype, name } = req.files.file;
   const filename = `${name}.${mimetype.split("/")[1]}`;
-  req.files.file.mv(
-    ostype === "Linux"
-      ? path.trim() + "/" + filename
-      : `${process.env.PAPER_CONTENT_PATH}${filename}`,
-    (error) => {
-      console.log(error, path);
-    }
-  );
+  req.files.file.mv(`${process.env.PAPER_CONTENT_PATH}${filename}`, (error) => {
+    console.log(error, path);
+  });
   const payload = {
     ...req.body,
     setter: {
@@ -116,10 +122,16 @@ paper_router.get("/id/:id", async (req, res) => {
   }
 });
 
-//   view paper content by paper code
+//   view paper content by paper code for moderator
+/**
+ * @query {pid} string
+ * @query {mid} string
+ * @returns {Buffer}
+ *
+ */
 paper_router.get("/moderator/view", async (req, res) => {
   const { pid, mid } = req.query;
-  console.log(mid, pid);
+
   try {
     // check if moderator exists
     const moderator = await moderatorModel.findOne({
@@ -133,8 +145,6 @@ paper_router.get("/moderator/view", async (req, res) => {
         error: true,
       });
     }
-
-    console.log(moderator?.subject, pid);
 
     // check if moderator is allowed to view paper
     if (
@@ -177,7 +187,92 @@ paper_router.get("/moderator/view", async (req, res) => {
   }
 });
 
-//  accept paper and shcedule exam
+// view paper content and download (examiner)
+/**
+ * @query {pid} string
+ * @query {eid} string
+ * @returns {Buffer}
+ *
+ */
+
+paper_router.get("/examiner/view", async (req, res) => {
+  const { pid, eid } = req.query;
+  function check_if_availabel(time, window) {
+    return (
+      new Date(time).getTime() - Number(window) * 60 * 1000 <=
+      new Date().getTime()
+    );
+  }
+  
+  try {
+    // check if examiner exists
+    const examiner = await examinerModel.findOne({
+      email: eid,
+    });
+
+    if (!examiner) {
+      return res.status(400).json({
+        data: null,
+        message: "Invalid examiner.",
+        error: true,
+      });
+    }
+
+    // check if examiner is allowed to view paper
+    if (
+      examiner?.subjects.filter((subject) => subject.code === pid).length === 0
+    ) {
+      return res.status(400).json({
+        data: null,
+        message: "You are not allowed to view paper or download paper.",
+        error: false,
+      });
+    }
+
+    const data = await paperModel.findOne(
+      {
+        "subject.code": pid,
+        "status.accepted": true,
+      },
+      {
+        file_url: 1,
+        status: 1,
+      }
+    );
+    const check_availabel = check_if_availabel(
+      data.status.time,
+      data.status.allow_before
+    );
+    if (!check_availabel) {
+      return res.status(400).json({
+        data: null,
+        message: `Paper is scheduled for ${new Date().toLocaleString("en-in", {
+          dateStyle: "full",
+          timeStyle: "medium",
+        })}.`,
+        error: false,
+      });
+    }
+    if (!data) {
+      return res.status(400).json({
+        data: null,
+        message: "Invalid paper.",
+        error: false,
+      });
+    }
+    const file = fs.readFileSync(
+      `${process.env.PAPER_CONTENT_PATH}${data.file_url}`
+    );
+    return res.status(200).header("Content-Type", "application/pdf").send(file);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      data: null,
+      message: "Fail to load paper content.",
+      error: true,
+    });
+  }
+});
 
 //  get paper by id
 paper_router.get("/id/:id", async (req, res) => {
@@ -199,10 +294,10 @@ paper_router.get("/id/:id", async (req, res) => {
   }
 });
 
-//   view paper content by paper code
+//  accept paper and shcedule exam
+
 paper_router.post("/moderator/accept", async (req, res) => {
   const payload = req.body;
-  console.log(payload);
 
   try {
     // check if moderator exists
@@ -231,10 +326,34 @@ paper_router.post("/moderator/accept", async (req, res) => {
     //   });
     // }
 
+    // getting examiners with subject code
+    const examiner_emails = await examinerModel.find(
+      {
+        "subjects.code": {
+          $in: [payload.subject.code],
+        },
+      },
+      {
+        email: 1,
+        name: 1,
+      }
+    );
+
+    //  sending them email
+    examiner_emails.map(async ({ email, name }) => {
+      await sendMail({
+        from: process.env.EMAIL,
+        to: email,
+        html: notify_examiner({ name, subject: payload.subject , date : payload.status.time}),
+        subject: `Reminder: Paper for ${payload.subject.name} (${payload.subject.code}) has been scheduled.`,
+      });
+    });
+
     const data = await paperModel.findOneAndUpdate(
       {
         "subject.code": payload.subject.code,
       },
+
       {
         $set: {
           status: {
@@ -244,7 +363,6 @@ paper_router.post("/moderator/accept", async (req, res) => {
         },
       }
     );
-    console.log(data);
 
     if (!data) {
       return res.status(400).json({
@@ -267,131 +385,4 @@ paper_router.post("/moderator/accept", async (req, res) => {
   }
 });
 
-//   await paperModel.insertMany([
-//     {
-//       year: 3,
-//       setter: {
-//         name: "Aniket Tote",
-//         id: "6465c0445b9ab09efc0b163c",
-//       },
-//       date: new Date(),
-//       subject: {
-//         name: "Compiler Design",
-//         code: "COC0J5IL96DCE8",
-//       },
-//       total_marks: 60,
-//       duration: 180,
-//       file_url: "http://localhost:6789/static/offer-letter-xomoy-signedpdf.pdf",
-//     },
-//     {
-//       year: 2,
-//       setter: {
-//         name: "chetan ingle",
-//         id: "6465df765b9ab09efc0b1661",
-//       },
-//       date: new Date(),
-//       subject: {
-//         name: "Geography",
-//         code: "GE15JKMK7I9L93",
-//       },
-//       total_marks: 60,
-//       duration: 180,
-//       file_url: "http://localhost:6789/static/offer-letter-xomoy-signedpdf.pdf",
-//     },
-//   ]);
-// });
 export default paper_router;
-
-let a = {
-  data: [
-    {
-      _id: "646c9f995378e1a769155375",
-      name: "Sushant Nirphal",
-      experience: 48,
-      qualification: "M.Tech(CD)",
-      institute: "GCOE Yavatmal",
-      subject: [
-        {
-          _id: "647331e840bab806d0eb80ba",
-          name: "Compiler Design",
-          code: "COC0J5IL96DCE8",
-        },
-        {
-          _id: "647331e840bab806d0eb80bb",
-          name: "Geography",
-          code: "GE15JKMK7I9L93",
-        },
-      ],
-      email: "sushnirph3al@gmail.com",
-      phone: "+91 9544 243 333",
-      address: "At naringe nagar",
-      profile: "https://avatars.githubusercontent.com/u/76222991?v=4",
-      password: "abc",
-      previousWork: ["djngvjfng59u89m5vjkg", "fcjmf49385mthvg"],
-      role: "moderator",
-      createdAt: "2023-05-23T11:12:25.647Z",
-      updatedAt: "2023-05-23T11:12:25.647Z",
-      __v: 0,
-    },
-    {
-      _id: "646c9fa65378e1a769155382",
-      name: "Sushant Nirphal",
-      experience: 48,
-      qualification: "M.Tech(CD)",
-      institute: "GCOE Yavatmal",
-      subject: [
-        {
-          _id: "647331e840bab806d0eb80bc",
-          name: "History",
-          code: "HIG45LG90H587B",
-        },
-        {
-          _id: "647331e840bab806d0eb80bd",
-          name: "Marathi",
-          code: "MAN3GMAFMH0FD9",
-        },
-      ],
-      email: "sushnirph4al@gmail.com",
-      phone: "+91 9544 233 333",
-      address: "At naringe nagar",
-      profile: "https://avatars.githubusercontent.com/u/76222991?v=4",
-      password: "dkvgmfsjknb5409uv09u8965vmjy",
-      previousWork: ["djngvjfng59u89m5vjkg", "fcjmf49385mthvg"],
-      role: "moderator",
-      createdAt: "2023-05-23T11:12:38.041Z",
-      updatedAt: "2023-05-23T11:12:38.041Z",
-      __v: 0,
-    },
-    {
-      _id: "646c9fad5378e1a769155384",
-      name: "chetan",
-      experience: 64,
-      qualification: "btech",
-      institute: "gcoey",
-      subject: [
-        {
-          _id: "647331e840bab806d0eb80be",
-          name: "DBMS",
-          code: "DBAHMJCI2E9216",
-        },
-        {
-          _id: "647331e840bab806d0eb80bf",
-          name: "Bid data analytics",
-          code: "BID03L9GIC41N7",
-        },
-      ],
-      email: "inglechet@gmail.com",
-      phone: "88533",
-      address: "ytl",
-      profile:
-        "https://w7.pngwing.com/pngs/485/458/png-transparent-cisco-systems-vpn-client-cisco-anyconnect-vpn-client-computer-icons-virtual-private-network-secure-miscellaneous-trademark-logo.png",
-      previousWork: ["64"],
-      role: "moderator",
-      createdAt: "2023-05-23T11:12:45.889Z",
-      updatedAt: "2023-05-23T11:12:45.889Z",
-      __v: 0,
-    },
-  ],
-  message: "Success.",
-  success: true,
-};

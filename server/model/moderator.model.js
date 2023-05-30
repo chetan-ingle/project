@@ -17,7 +17,6 @@ const moderatorSchema = new Schema(
     },
     phone: {
       type: String,
-      unique: true,
     },
     address: String,
     profile: String,

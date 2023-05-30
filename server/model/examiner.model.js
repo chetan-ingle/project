@@ -11,10 +11,9 @@ const examinerSchema = Schema(
     },
     phone: {
       type: String,
-      unique: true,
     },
     institute_address: String,
-    isVerified: Boolean,
+    isVerified: { type: Boolean, default: true },
     profile: String,
     password: String,
     subjects: [{ name: String, code: String }],
