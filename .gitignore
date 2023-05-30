@@ -25,3 +25,5 @@ dist-ssr
 #ignore all .js files in node_modules folder
 node_modules/**/*.js
 /server/node_modules/**/*.js
+/server/data-paper/**/*/.*
+/server/static/**/*/.*
