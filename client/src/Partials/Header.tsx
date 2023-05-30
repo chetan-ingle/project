@@ -15,18 +15,18 @@ const Header = () => {
     localStorage.removeItem("user");
     setUser(null);
     navigate("/");
-
   };
   return (
     <header className="bg-white fixed w-full px-6 py-4 flex items-center justify-between">
       <Link
-        to={user?.role ? "/dashboard/" + user?.role : '/'}
+        to={user?.role ? "/dashboard/" + user?.role : "/"}
         className="text-lg flex items-center font-semibold"
       >
         <img src="/icon.png" alt="Logo" />
         <span className="mx-2">SRPD</span>
       </Link>
       <nav className="space-x-3 flex items-center text-sky-600">
+        <Link to={"/material/all"}>View all material</Link>
         <div
           tabIndex={-1}
           className="relative cursor-pointer underline font-bold text-slate-800 group"

@@ -4,6 +4,9 @@ const AdminRouter = Router();
 import moderatorModel from "../model/moderator.model.js";
 import examinerModel from "../model/examiner.model.js";
 import subjectModel from "../model/subject.model.js";
+import { sendMail } from "../email/sendMail.js";
+import alert_moderator from "../template/alert_moderator.js";
+import alert_examiner from "../template/alert_examiner.js";
 // me
 AdminRouter.get("/me", async (req, res) => {
   try {
@@ -42,6 +45,16 @@ AdminRouter.post("/create/moderator", async (req, res) => {
   const payload = req.body;
   try {
     const akg = await moderatorModel.create(payload);
+    await sendMail({
+      html: alert_moderator({
+        email: payload.email,
+        name: payload.name,
+        password: payload.phone,
+        subject: payload.subject,
+      }),
+      subject:"Selection as a Moderator",
+      to:payload.email,
+    });
     return res.status(200).json({
       error: false,
       message: "Moderator created successfully.",
@@ -61,6 +74,19 @@ AdminRouter.post("/create/examiner", async (req, res) => {
   console.log(payload);
   try {
     const akg = await examinerModel.create(payload);
+    //sending email
+    await sendMail({
+      html: alert_examiner({
+        email: payload.email,
+        name: payload.name,
+        institute:payload.institute,
+        address:payload.institute_address,
+        password: payload.phone,
+        subject: payload.subjects,
+      }),
+      subject:"Selection as a Examiner",
+      to:payload.email,
+    });
     return res.status(200).json({
       error: false,
       message: "examiner created successfully.",

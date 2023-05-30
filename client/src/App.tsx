@@ -28,6 +28,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminLogin from "./pages/AdminLogin";
 import AdminExaminers from "./pages/AdminExaminers";
 import AdminModerators from "./pages/AdminModerators";
+import AdminSubjects from "./pages/AdminSubjects";
+import AllMaterial from "./pages/AllMaterial";
 
 
 function App() {
@@ -123,6 +125,14 @@ function App() {
     {
       path: "/dashboard/admin/moderators",
       element: <ProtectedPage children={<AdminModerators />} acceptedRoles={[role.ADMIN]} role={user?.role} />
+    },
+    {
+      path: "/dashboard/admin/subjects",
+      element: <ProtectedPage children={<AdminSubjects />} acceptedRoles={[role.ADMIN]} role={user?.role} />
+    },
+    {
+      path: "/material/all",
+      element: <AllMaterial />
     },
     {
       path: "*",

@@ -80,7 +80,7 @@ function AdminModerators() {
     <Layout>
       <main className="h-[calc(100vh-160px)]">
         <h2 className="p-8 text-xl font-semibold">
-          All examiners.
+          All moderators
         </h2>
         <main className="flex flex-col h-full md:flex-row w-full">
           <section className="w-full md:w-1/3 h-full overflow-y-auto space-y-4 border-r">

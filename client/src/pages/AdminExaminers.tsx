@@ -225,10 +225,10 @@ function AdminExaminers() {
 
                         return <div
                           key={item?.code}
-                          className='space-x-1 mb-1 w-1/2'
+                          className='space-x-1  mb-1 w-1/2'
                         >
-                          <input name='subject' type="checkbox" value={item?.code} id={item?.code} />
-                          <label htmlFor={item?.code}>
+                          <input name='subject' className='cursor-pointer' type="checkbox" value={item?.code} id={item?.code} />
+                          <label className='cursor-pointer' htmlFor={item?.code}>
                             {item?.name}
                           </label>
                         </div>

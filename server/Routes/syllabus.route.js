@@ -4,9 +4,27 @@ import fs from "fs";
 import { ostype, path } from "../utils/os.js";
 const SyllabusRouter = express.Router();
 
+// get all material
+
+SyllabusRouter.get("/all/material", async (req, res) => {
+  const { subject } = req.params;
+
+  try {
+    const data = await syllabusModel.find({});
+    return res.status(200).json({ data, message: "Success.", success: true });
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ data: null, message: "Fail to load materials.", success: false });
+  }
+});
+
 SyllabusRouter.post("/create", async (req, res) => {
   const { type, by, name: desc, subject } = req.body;
-  if(!req.files) return res.status(400).json({data: null, error: true, message: "No file found."})
+  if (!req.files)
+    return res
+      .status(400)
+      .json({ data: null, error: true, message: "No file found." });
   const { size, mimetype, name } = req.files.file;
   const filename = `${name}.${mimetype.split("/")[1]}`;
   req.files.file.mv(
