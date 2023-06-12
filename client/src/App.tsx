@@ -51,36 +51,36 @@ function App() {
     },
     {
       path: "/dashboard/moderator/applications",
-      element: <SetterApplications />,
+      element: <ProtectedPage acceptedRoles={[role.ADMIN,role.MODERATOR]}role={user?.role}children={<SetterApplications />}/>,
     },
     {
       path: "/dashboard/moderator/setters",
-      element: <SelectedSetter />,
+      element: <ProtectedPage acceptedRoles={[role.ADMIN, role.MODERATOR]} role={user?.role} children={<SelectedSetter />}/>,
     },
     {
       path: "/dashboard/moderator/upload-syllabus",
-      element: <UploadSyllabus />,
+      element: <ProtectedPage acceptedRoles={[role.ADMIN, role.MODERATOR]} role={user?.role} children={ <UploadSyllabus />}/>,
     },
     {
       path: "/dashboard/moderator/question-papers",
-      element: <QuestionPapers />,
+      element: <ProtectedPage acceptedRoles={[role.ADMIN, role.MODERATOR]} role={user?.role} children={<QuestionPapers />}/>,
     },
     // setter routes
     {
       path: "/setter/apply",
-      element: <PaperSetterApplication />,
+      element:<ProtectedPage acceptedRoles={[role.ADMIN, role.SETTER]} role={user?.role} children={<PaperSetterApplication />}/>,
     },
     {
       path: "/dashboard/setter/materials",
-      element: <SetterMaterial />,
+      element: <ProtectedPage acceptedRoles={[role.ADMIN, role.SETTER]} role={user?.role} children={<SetterMaterial />}/>,
     },
     {
       path: "/dashboard/setter/notification",
-      element: <SetterNotification />,
+      element:<ProtectedPage acceptedRoles={[role.ADMIN, role.SETTER]} role={user?.role} children={ <SetterNotification />}/>,
     },
     {
       path: "/dashboard/setter/upload-paper",
-      element: <UploadPaper />,
+      element: <ProtectedPage acceptedRoles={[role.ADMIN, role.SETTER]} role={user?.role} children={<UploadPaper />}/>,
     },
     {
       path: "/dashboard/setter",
@@ -89,15 +89,15 @@ function App() {
     // examiner routes
     {
       path: "/dashboard/examiner",
-      element: <ExaminerDashboard />,
+      element:<ProtectedPage acceptedRoles={[role.ADMIN, role.EXAMINER]} role={user?.role} children= {<ExaminerDashboard />}/>,
     },
     {
       path: "/dashboard/examiner/notification",
-      element: <ExaminerNotification />,
+      element: <ProtectedPage acceptedRoles={[role.ADMIN, role.EXAMINER]} role={user?.role} children= {<ExaminerNotification />}/>,
     },
     {
       path: "/dashboard/examiner/download-paper",
-      element: <DownloadPaper />,
+      element:<ProtectedPage acceptedRoles={[role.ADMIN, role.EXAMINER]} role={user?.role} children=  {<DownloadPaper />}/>,
     },
     // login routes
     {
