@@ -7,7 +7,17 @@ const paper_router = Router();
 import fs from "fs";
 import { sendMail } from "../email/sendMail.js";
 import notify_examiner from "../template/notify_examiner.js";
+import { execPath } from "process";
+import { exec } from "child_process";
 
+const dir = exec("pwd", (err, stdout, stderr) => {
+  if (err) {
+    console.log(err);
+  }
+  return stdout;
+});
+const PAPER_CONTENT_PATH =
+  ostype === "windows" ? `${dir}\\data-paper\\` : `${dir}/data-paper/`;
 // get papers by id(paper  id)
 paper_router.get("/:subject", async (req, res) => {
   const { subject } = req.params;
@@ -66,7 +76,7 @@ paper_router.post("/", async (req, res) => {
 
   const { size, mimetype, name } = req.files.file;
   const filename = `${name}.${mimetype.split("/")[1]}`;
-  req.files.file.mv(`${process.env.PAPER_CONTENT_PATH}${filename}`, (error) => {
+  req.files.file.mv(`${PAPER_CONTENT_PATH}${filename}`, (error) => {
     console.log(error, path);
   });
   const payload = {
@@ -174,7 +184,7 @@ paper_router.get("/moderator/view", async (req, res) => {
       });
     }
     const file = fs.readFileSync(
-      `${process.env.PAPER_CONTENT_PATH}${data.file_url}`
+      `${PAPER_CONTENT_PATH}${data.file_url}`
     );
     return res.status(200).header("Content-Type", "application/pdf").send(file);
   } catch (error) {
@@ -203,7 +213,7 @@ paper_router.get("/examiner/view", async (req, res) => {
       new Date().getTime()
     );
   }
-  
+
   try {
     // check if examiner exists
     const examiner = await examinerModel.findOne({
@@ -261,7 +271,7 @@ paper_router.get("/examiner/view", async (req, res) => {
       });
     }
     const file = fs.readFileSync(
-      `${process.env.PAPER_CONTENT_PATH}${data.file_url}`
+      `${PAPER_CONTENT_PATH}${data.file_url}`
     );
     return res.status(200).header("Content-Type", "application/pdf").send(file);
   } catch (error) {
@@ -344,7 +354,11 @@ paper_router.post("/moderator/accept", async (req, res) => {
       await sendMail({
         from: process.env.EMAIL,
         to: email,
-        html: notify_examiner({ name, subject: payload.subject , date : payload.status.time}),
+        html: notify_examiner({
+          name,
+          subject: payload.subject,
+          date: payload.status.time,
+        }),
         subject: `Reminder: Paper for ${payload.subject.name} (${payload.subject.code}) has been scheduled.`,
       });
     });
