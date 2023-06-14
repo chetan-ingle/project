@@ -20,9 +20,10 @@ import SubjectRouter from "./Routes/subject.route.js";
 import AdminRouter from "./Routes/admin.route.js";
 const PORT = process.env.PORT || 6789;
 const app = express();
+console.log(process.env.CLIENT_LINK , 'client link');
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:4173",process.env.CLIENT_LINK],
+    origin: ["http://localhost:5173", "http://localhost:4173", process.env.CLIENT_LINK],
     credentials: true,
   })
 );
