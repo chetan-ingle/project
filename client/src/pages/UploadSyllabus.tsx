@@ -208,7 +208,7 @@ const UploadSyllabus = () => {
                           className=" text-left flex  items-center"
                           onClick={() =>
                             setDocLink(
-                              "http://localhost:6789/static/" + item?.url
+                              import.meta.env.VITE_BASE_URL_CONTENT + item?.url
                             )
                           }
                         >

@@ -10,14 +10,15 @@ import notify_examiner from "../template/notify_examiner.js";
 import { execPath } from "process";
 import { exec } from "child_process";
 
-const dir = exec("pwd", (err, stdout, stderr) => {
-  if (err) {
-    console.log(err);
-  }
-  return stdout;
-});
-const PAPER_CONTENT_PATH =
-  ostype === "windows" ? `${dir}\\data-paper\\` : `${dir}/data-paper/`;
+// const dir = 'C:\\Users\\pubgi\\Desktop\\finalyrpr\\server\\data-paper\\'
+// exec("pwd", (err, stdout, stderr) => {
+//   if (err) {
+//     console.log(err);
+//   }
+//   return stdout;
+// });
+const PAPER_CONTENT_PATH ='C:\\Users\\pubgi\\Desktop\\finalyrpr\\server\\data-paper\\'
+  // ostype === "windows" ? `${dir}\\data-paper\\` : `${dir}/data-paper/`;
 // get papers by id(paper  id)
 paper_router.get("/:subject", async (req, res) => {
   const { subject } = req.params;
